@@ -1,10 +1,23 @@
 ﻿#pragma once
+#include <cstdio>
 #include <string>
 #include <vector>
+#include <vector>
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+#define DEBUG 1
 
 // image loader candicates:
 // - https://github.com/nothings/stb
 // - https://github.com/charlesdong/tiny-image/blob/master/src/tinyimage.cpp
+
+// using c++17
+// - https://stackoverflow.com/questions/63036624/how-to-enable-c17-code-generation-in-vs2019-cuda-project
 
 /* root
 	- train
@@ -12,7 +25,7 @@
 		- 1
 		- ..
 	- test
-		- 0 
+		- 0
 			- img.jpg
 		- 1
 			- img1.jpg
@@ -32,39 +45,67 @@ class DataSet {
 public:
 	const std::string path;
 
-	const int size;	// wielkosc calego datasetu w bajtach
-	const int item_count; // ilosc obrazkow
+	int size = 0;	// wielkosc calego datasetu w bajtach
+	int item_count = 0; // ilosc obrazkow
 
-	const int batch_size;
+	int batch_size;
 
-	std::vector<int> pos; // pozycje na ktorych zaczyna sie para (labelka,dane obrazka)
+	std::vector<int> labels;
+	std::vector<uint8_t*> images;
 
-	const uint8_t* host_data;
-	const uint8_t* device_data;
+	uint8_t* host_data;
+	uint8_t* device_data;
 
-	DataSet(const std::string & path, int batch_size) : batch_size(batch_size) {
-		// przejść path
-		// policzyc obrazki
-		// malloc() -> new []
-		// cudaMalloc()
-		// 0 0xF3 .. 0xFF 7 0x7E ..
+	DataSet(const std::string& path, int batch_size) : batch_size(batch_size) {
+
+		std::filesystem::path root(path);
+
+		for (const auto& item : std::filesystem::directory_iterator(root)) {
+			if (std::filesystem::is_directory(item)) {
+				std::string label = item.path().filename().string();
+				int i_label = std::stoi(label);
+
+				for (const auto& image : std::filesystem::directory_iterator(item)) {
+					std::string image_path = image.path().string();
+
+					int w, h, n;
+					uint8_t* image_data = stbi_load(image_path.c_str(), &w, &h, &n, STBI_rgb);
+
+					labels.push_back(i_label);
+					images.push_back(image_data);
+
+					item_count++;
+					size += w * h * n;
+
+#if DEBUG == 1
+					std::cout << "(w,h,n): (" << w << ',' << h << ',' << n << ')' << std::endl;
+#endif
+				}
+
+			}
+		}
+
+#if DEBUG == 1
+		std::cout << "itms: " << item_count << " size: " << size << std::endl;
+
+		for (int label : labels) {
+			std::cout << label << std::endl;
+		}
+#endif
 	}
 
-	~Dataset() {
-		// delete
-		// cudaFree
+	~DataSet() {
+		for (uint8_t* ptr : images) {
+			stbi_image_free(ptr);
+		}
 	}
 
 	item_t get(int index) {
-		item_t item = {
-			.label = host_data[this->pos[index]],
-			.ptr = &device_data[this->pos[index] + 1]
-		};
 
-		return item;
 	}
 
-	item_t * get_batch(int batch_index) {
-		// this->batch_size
+	item_t* get_batch(int batch_index) {
+
 	}
+
 };
