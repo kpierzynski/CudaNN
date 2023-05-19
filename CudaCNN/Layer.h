@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <random>
 
 class Layer {
 public:
@@ -12,5 +13,17 @@ public:
 
 	virtual void forward(uint8_t * data) = 0;
 	virtual void backward(uint8_t * gradient) = 0;
+
+protected:
+	void generate_random_weights(float* weights, int size) {
+		std::random_device dev;
+		std::mt19937 gen(dev());
+
+		std::uniform_real_distribution<float> unif(-0.5, 0.5);
+
+		for (int i = 0; i < size; i++) {
+			weights[i] = unif(gen);
+		}
+	}
 
 };
