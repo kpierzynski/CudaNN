@@ -66,8 +66,8 @@ public:
 
 		images_file.read((char*)&w, 4);
 		images_file.read((char*)&h, 4);
-		w = 28;
-		h = 28;
+		w = reverse(w);
+		h = reverse(h);
 
 		labels_file.read((char*)&labels_count, 4);
 		labels_count = reverse(labels_count);
@@ -76,7 +76,9 @@ public:
 			throw std::runtime_error("Wrong item amount between labels and data.");
 		}
 
+#if DEBUG == 1
 		std::cout << "Start reading images, #" << images_count << " (" << w << "," << h << ")" << std::endl;
+#endif
 
 		for (int i = 0; i < images_count; i++) {
 			uint8_t* image_data = new uint8_t[w * h];
@@ -89,7 +91,9 @@ public:
 			labels.push_back(label_data);
 		}
 
+#if DEBUG == 1
 		std::cout << "Done reading images" << std::endl;
+#endif
 
 		item_count = images_count;
 
