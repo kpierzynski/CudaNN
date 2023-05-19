@@ -100,11 +100,14 @@ public:
 	void print(int index) {
 		std::cout << "Image at position: " << index << " has label: " << labels[index] << std::endl;
 
+		const char asciiChars[] = " .:-=+*#%@";
+
 		for (int y = 0; y < 28; ++y) {
 			for (int x = 0; x < 28; ++x) {
-				char pixelChar = images[index][y * 28 + x] < 128 ? '#' : ' ';
+				uint8_t pixel = images[index][y * 28 + x];
+				uint8_t charIndex = pixel / 26;
 
-				std::cout << pixelChar;
+				std::cout << asciiChars[charIndex];
 			}
 			std::cout << std::endl;
 		}
