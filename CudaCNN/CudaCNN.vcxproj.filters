@@ -6,10 +6,12 @@
   <ItemGroup>
     <ClCompile Include="DataSet.cpp" />
     <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="Network.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataSet.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Network.h" />
   </ItemGroup>
 </Project>

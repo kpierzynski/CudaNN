@@ -4,11 +4,11 @@ Network::Network() {
 
 }
 
-void Network::addLayer(Layer& layer) {
+void Network::addLayer(Layer * layer) {
 	this->layers.push_back(layer);
 }
 
-void Network::fit(std::vector<uint8_t*> x_input, std::vector<int> y_input, float lr, int epochs) {
+void Network::fit(std::vector<uint8_t*>& x_input, std::vector<int>& y_input, float lr, int epochs) {
 	for (int epoch = 0; epoch < epochs; epoch++) {
 		// for each item in x_input train set
 		for (uint8_t* sample : x_input) {

@@ -85,10 +85,12 @@
   <ItemGroup>
     <ClCompile Include="DataSet.cpp" />
     <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="Network.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataSet.h" />
     <ClInclude Include="Layer.h" />
+    <ClInclude Include="Network.h" />
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
