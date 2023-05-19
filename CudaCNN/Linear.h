@@ -1,12 +1,17 @@
 #pragma once
 
 #include "Layer.h"
+#include "Matrix.h"
 
-
-class Linear : Layer {
+class Linear : public Layer {
 public:
 	Linear(int input_size, int output_size);
 
-	uint8_t * forward(uint8_t* data) override;
-	uint8_t * backward(uint8_t* gradient) override;
+	std::vector<float> forward(std::vector<float>& data) override;
+	std::vector<float> backward(std::vector<float>& gradient, float lr) override;
+private:
+	Matrix * weights;
+	Matrix * bias;
+
+	Matrix* input;
 };

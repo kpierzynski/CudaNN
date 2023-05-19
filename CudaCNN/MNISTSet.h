@@ -13,7 +13,7 @@ class MNISTSet {
 public:
 
 	std::vector<int> labels;
-	std::vector<float*> images;
+	std::vector<std::vector<float>> images;
 
 	int item_count;
 

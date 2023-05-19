@@ -4,6 +4,8 @@
 
 #include <stdio.h>
 
+#include "Network.h"
+#include "Linear.h"
 #include "MNISTSet.h"
 
 cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size);
@@ -17,9 +19,14 @@ __global__ void addKernel(int *c, const int *a, const int *b)
 int main()
 {
 
-    //DataSet ds(std::string("C:\\Users\\konrad\\Desktop\\DATASET_TEST"), 12);
     MNISTSet mnist(std::string("D:\\MNIST\\train-images.idx3-ubyte"), std::string("D:\\MNIST\\train-labels.idx1-ubyte"));
     mnist.print(0);
+
+    Network net;
+    net.addLayer(new Linear(28 * 28, 30));
+    net.addLayer(new Linear(30, 10));
+
+    net.fit(mnist.images, mnist.labels, 0.01, 3);
 
     return 0;
 

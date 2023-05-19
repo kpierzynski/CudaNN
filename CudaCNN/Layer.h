@@ -9,9 +9,7 @@ public:
 
 	Layer(int input_size, int output_size);
 
-	virtual uint8_t * forward(uint8_t * data) = 0;
-	virtual uint8_t * backward(uint8_t * gradient) = 0;
+	virtual std::vector<float> forward(std::vector<float>& data) = 0;
+	virtual std::vector<float> backward(std::vector<float>& gradient, float lr) = 0;
 
-protected:
-	void generate_random_weights(std::vector<float> weights, int size);
 };

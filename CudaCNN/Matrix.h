@@ -8,7 +8,10 @@
 
 class Matrix {
 public:
+    std::vector<float> data;
+
     Matrix(int rows, int columns);
+    Matrix(int rows, int columns, std::vector<float> values);
 
     int getRows() const;
     int getColumns() const;
@@ -16,10 +19,17 @@ public:
     int getElement(int row, int column) const;
     void setElement(int row, int column, int value);
 
+    Matrix transpose() const;
+
     Matrix operator*(const Matrix& other) const;
+    Matrix operator*(float scalar) const;
+    Matrix operator-(float scalar) const;
+    Matrix operator/(float scalar) const;
+    Matrix operator-(const Matrix& other) const;
+    Matrix operator+(const Matrix& other) const;
+    Matrix& Matrix::operator-=(const Matrix& other);
 
 private:
     int rows;
     int columns;
-    std::vector<float> data;
 };

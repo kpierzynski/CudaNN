@@ -8,6 +8,8 @@
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="MNISTSet.cpp" />
+    <ClCompile Include="Linear.cpp" />
+    <ClCompile Include="Matrix.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataSet.h" />
@@ -15,5 +17,10 @@
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="MNISTSet.h" />
+    <ClInclude Include="Linear.h" />
+    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="ReLU.h" />
+    <ClInclude Include="Softmax.h" />
+    <ClInclude Include="LossFunction.h" />
   </ItemGroup>
 </Project>
