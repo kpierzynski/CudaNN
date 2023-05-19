@@ -75,7 +75,9 @@ class Adam : Optimizer {
 int main()
 {
 
-    DataSet ds(std::string("C:\\Users\\konrad\\Desktop\\DATASET_TEST"), 12);
+    //DataSet ds(std::string("C:\\Users\\konrad\\Desktop\\DATASET_TEST"), 12);
+    MNIST mnist(std::string("D:\\MNIST\\train-images.idx3-ubyte"), std::string("D:\\MNIST\\train-labels.idx1-ubyte"));
+    mnist.print(0);
 
     return 0;
 

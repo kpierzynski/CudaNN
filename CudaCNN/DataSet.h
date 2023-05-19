@@ -31,6 +31,101 @@
 			- img1.jpg
 */
 
+class MNIST {
+public:
+
+	std::vector<int> labels;
+	std::vector<uint8_t*> images;
+
+	int item_count;
+
+	MNIST(const std::string& images_path, const std::string& labels_path) {
+		std::ifstream images_file(images_path, std::ios::binary);
+		std::ifstream labels_file(labels_path, std::ios::binary);
+
+		if (!images_file || !labels_file) {
+			throw std::runtime_error("Cannot open images file.");
+		}
+
+		images_file.seekg(0, images_file.beg);
+
+		int images_magic_number = 0, images_count, w, h;
+		int labels_magic_number = 0, labels_count;
+
+		images_file.read((char*)&images_magic_number, 4);
+		labels_file.read((char*)&labels_magic_number, 4);
+		images_magic_number = reverse(images_magic_number);
+		labels_magic_number = reverse(labels_magic_number);
+
+		if (images_magic_number != 0x803 || labels_magic_number != 0x801) {
+			throw std::runtime_error("Wrong magic_number");
+		}
+
+		images_file.read((char*)&images_count, 4);
+		images_count = reverse(images_count);
+
+		images_file.read((char*)&w, 4);
+		images_file.read((char*)&h, 4);
+		w = 28;
+		h = 28;
+
+		labels_file.read((char*)&labels_count, 4);
+		labels_count = reverse(labels_count);
+
+		if (images_count != labels_count) {
+			throw std::runtime_error("Wrong item amount between labels and data.");
+		}
+
+		std::cout << "Start reading images, #" << images_count << " (" << w << "," << h << ")" << std::endl;
+
+		for (int i = 0; i < images_count; i++) {
+			uint8_t* image_data = new uint8_t[w * h];
+			uint8_t label_data;
+
+			images_file.read((char*)image_data, w * h);
+			labels_file.read((char*)&label_data, 1);
+
+			images.push_back(image_data);
+			labels.push_back(label_data);
+		}
+
+		std::cout << "Done reading images" << std::endl;
+
+		item_count = images_count;
+
+		images_file.close();
+		labels_file.close();
+	}
+
+	void print(int index) {
+		std::cout << "Image at position: " << index << " has label: " << labels[index] << std::endl;
+
+		for (int y = 0; y < 28; ++y) {
+			for (int x = 0; x < 28; ++x) {
+				char pixelChar = images[index][y * 28 + x] < 128 ? '#' : ' ';
+
+				std::cout << pixelChar;
+			}
+			std::cout << std::endl;
+		}
+	}
+
+	~MNIST() {
+		for (const auto& data : images) {
+			delete[] data;
+		}
+	}
+
+private:
+	int reverse(int value) {
+		uint32_t result = ((value & 0xFF000000) >> 24) |
+			((value & 0x00FF0000) >> 8) |
+			((value & 0x0000FF00) << 8) |
+			((value & 0x000000FF) << 24);
+		return static_cast<uint32_t>(result);
+	}
+};
+
 typedef struct {
 	int label;
 	uint8_t* ptr;
