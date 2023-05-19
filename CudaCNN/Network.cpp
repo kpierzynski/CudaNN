@@ -8,8 +8,8 @@ void Network::addLayer(Layer * layer) {
 	this->layers.push_back(layer);
 }
 
-void Network::fit(std::vector<uint8_t*>& x_input, std::vector<int>& y_input, float lr, int epochs) {
-	for (int epoch = 0; epoch < epochs; epoch++) {
+void Network::fit(std::vector<float*>& x_input, std::vector<int>& y_input, float lr, int epochs) {
+	/*for (int epoch = 0; epoch < epochs; epoch++) {
 		// for each item in x_input train set
 		for (uint8_t* sample : x_input) {
 
@@ -17,8 +17,8 @@ void Network::fit(std::vector<uint8_t*>& x_input, std::vector<int>& y_input, flo
 
 			uint8_t* data = sample;
 			// go through all layers and compute forward result
-			for (Layer& layer : layers) {
-				data = layer.forward(data);
+			for (Layer * layer : layers) {
+				data = layer->forward(data);
 			}
 			float error = loss_function(sample, data);
 
@@ -27,13 +27,12 @@ void Network::fit(std::vector<uint8_t*>& x_input, std::vector<int>& y_input, flo
 
 			// Loop over layers, but from end.
 			for (auto it = layers.rbegin(); it != layers.rend(); ++it) {
-				Layer& layer = *it;
+				Layer * layer = *it;
 
-				back_error = layer.backward(back_error, lr);
-
+				back_error = layer->backward(back_error, lr);
 			}
 		}
-	}
+	}*/
 }
 
 void Network::predict() {

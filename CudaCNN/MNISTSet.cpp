@@ -43,13 +43,19 @@ MNISTSet::MNISTSet(const std::string& images_path, const std::string& labels_pat
 
 	for (int i = 0; i < images_count; i++) {
 		uint8_t* image_data = new uint8_t[w * h];
+		float* f_image_data = new float[w * h];
+
 		uint8_t label_data;
 
 		images_file.read((char*)image_data, w * h);
 		labels_file.read((char*)&label_data, 1);
 
-		images.push_back(image_data);
+		for (int i = 0; i < w * h; i++) f_image_data[i] = image_data[i] / 255.0f;
+
+		images.push_back(f_image_data);
 		labels.push_back(label_data);
+
+		delete[] image_data;
 	}
 
 #if DEBUG == 1
@@ -67,9 +73,9 @@ void MNISTSet::print(int index) {
 		const char asciiChars[] = " .:-=+*#%@";
 		for (int y = 0; y < 28; ++y) {
 		for (int x = 0; x < 28; ++x) {
-			uint8_t pixel = images[index][y * 28 + x];
-			uint8_t charIndex = pixel / 26;
-				std::cout << asciiChars[charIndex];
+			float pixel = images[index][y * 28 + x] * 255;
+			float charIndex = pixel / 26;
+				std::cout << asciiChars[(int)charIndex];
 		}
 		std::cout << std::endl;
 	}

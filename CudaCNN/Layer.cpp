@@ -4,7 +4,7 @@ Layer::Layer(int input_size, int output_size) : input_size(input_size), output_s
 
 }
 
-void Layer::generate_random_weights(float* weights, int size) {
+void Layer::generate_random_weights(std::vector<float> weights, int size) {
 	std::random_device dev;
 	std::mt19937 gen(dev());
 

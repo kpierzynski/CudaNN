@@ -85,11 +85,13 @@
   <ItemGroup>
     <ClCompile Include="DataSet.cpp" />
     <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="MNISTSet.cpp" />
     <ClCompile Include="Network.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataSet.h" />
     <ClInclude Include="Layer.h" />
+    <ClInclude Include="MNISTSet.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="stb_image.h" />
   </ItemGroup>

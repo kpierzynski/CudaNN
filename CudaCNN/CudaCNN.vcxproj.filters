@@ -7,11 +7,13 @@
     <ClCompile Include="DataSet.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="Network.cpp" />
+    <ClCompile Include="MNISTSet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataSet.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Network.h" />
+    <ClInclude Include="MNISTSet.h" />
   </ItemGroup>
 </Project>

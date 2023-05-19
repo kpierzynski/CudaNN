@@ -9,7 +9,7 @@ public:
 	Network();
 
 	void addLayer(Layer * layer);
-	void fit(	std::vector<uint8_t*>& x_input,
+	void fit(	std::vector<float*>& x_input,
 				std::vector<int>& y_input,
 				float lr = 0.01f,
 				int epochs = 4

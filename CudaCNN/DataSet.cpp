@@ -44,9 +44,13 @@ DataSet::~DataSet() {
 }
 
 item_t DataSet::get(int index) {
+	item_t item = { 0, NULL };
 
+	return item;
 }
 
 item_t* DataSet::get_batch(int batch_index) {
+	item_t * item = new item_t;
 
+	return item;
 }

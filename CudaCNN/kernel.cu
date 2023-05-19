@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-#include "DataSet.h"
+#include "MNISTSet.h"
 
 cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size);
 
@@ -14,69 +14,11 @@ __global__ void addKernel(int *c, const int *a, const int *b)
     c[i] = a[i] + b[i];
 }
 
-/*
-
-class DataSet {
-
-};
-
-class Network {
-
-};
-
-class Layer {
-
-};
-
-class Conv : Layer {
-
-};
-
-class Linear : Layer {
-
-};
-
-class ReLU : Layer {
-
-};
-
-class SoftMax : Layer {
-
-};
-
-class Pooling : Layer {
-
-};
-
-class MaxPooling : Pooling {
-
-};
-
-class LossFunction {
-
-};
-
-class CrossEntropy : LossFunction {
-
-};
-
-class Optimizer {
-
-};
-
-class Adam : Optimizer {
-
-};
-
-*/
-
-
-
 int main()
 {
 
     //DataSet ds(std::string("C:\\Users\\konrad\\Desktop\\DATASET_TEST"), 12);
-    MNIST mnist(std::string("D:\\MNIST\\train-images.idx3-ubyte"), std::string("D:\\MNIST\\train-labels.idx1-ubyte"));
+    MNISTSet mnist(std::string("D:\\MNIST\\train-images.idx3-ubyte"), std::string("D:\\MNIST\\train-labels.idx1-ubyte"));
     mnist.print(0);
 
     return 0;

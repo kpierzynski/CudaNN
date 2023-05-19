@@ -3,7 +3,6 @@
 #include <cstdio>
 #include <string>
 #include <vector>
-#include <vector>
 #include <iostream>
 #include <fstream>
 #include <filesystem>
@@ -14,7 +13,7 @@ class MNISTSet {
 public:
 
 	std::vector<int> labels;
-	std::vector<uint8_t*> images;
+	std::vector<float*> images;
 
 	int item_count;
 

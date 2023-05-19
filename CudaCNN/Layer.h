@@ -13,5 +13,5 @@ public:
 	virtual uint8_t * backward(uint8_t * gradient) = 0;
 
 protected:
-	void generate_random_weights(float* weights, int size);
+	void generate_random_weights(std::vector<float> weights, int size);
 };
