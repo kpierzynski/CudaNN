@@ -10,6 +10,7 @@
     <ClCompile Include="MNISTSet.cpp" />
     <ClCompile Include="Linear.cpp" />
     <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="ReLU.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataSet.h" />

@@ -7,11 +7,11 @@ class Linear : public Layer {
 public:
 	Linear(int input_size, int output_size);
 
-	std::vector<float> forward(std::vector<float>& data) override;
-	std::vector<float> backward(std::vector<float>& gradient, float lr) override;
+	Matrix& forward(Matrix& data) override;
+	Matrix& backward(Matrix& gradient, float lr) override;
 private:
 	Matrix * weights;
 	Matrix * bias;
 
-	Matrix* input;
+	Matrix input;
 };

@@ -41,7 +41,7 @@ MNISTSet::MNISTSet(const std::string& images_path, const std::string& labels_pat
 	std::cout << "Start reading images, #" << images_count << " (" << w << "," << h << ")" << std::endl;
 #endif
 
-	for (int i = 0; i < images_count; i++) {
+	for (int i = 0; i < 1000; i++) {
 		uint8_t* image_data = new uint8_t[w * h];
 		std::vector<float> f_image_data;
 
@@ -62,7 +62,8 @@ MNISTSet::MNISTSet(const std::string& images_path, const std::string& labels_pat
 	std::cout << "Done reading images" << std::endl;
 #endif
 
-	item_count = images_count;
+	//item_count = images_count;
+	item_count = 1000;
 
 	images_file.close();
 	labels_file.close();

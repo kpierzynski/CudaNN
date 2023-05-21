@@ -29,11 +29,11 @@ int Matrix::getColumns() const {
     return columns;
 }
 
-int Matrix::getElement(int row, int column) const {
+float Matrix::getElement(int row, int column) const {
     return data[row * columns + column];
 }
 
-void Matrix::setElement(int row, int column, int value) {
+void Matrix::setElement(int row, int column, float value) {
     data[row * columns + column] = value;
 }
 
@@ -56,6 +56,7 @@ Matrix Matrix::operator*(const Matrix& other) const {
 
     return result;
 }
+
 
 Matrix Matrix::operator+(const Matrix& other) const {
     if (rows != other.rows || columns != other.columns) {

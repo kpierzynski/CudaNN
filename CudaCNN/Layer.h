@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <random>
 
+#include "Matrix.h"
+
 class Layer {
 public:
 	int input_size;
@@ -9,7 +11,7 @@ public:
 
 	Layer(int input_size, int output_size);
 
-	virtual std::vector<float> forward(std::vector<float>& data) = 0;
-	virtual std::vector<float> backward(std::vector<float>& gradient, float lr) = 0;
+	virtual Matrix& forward(Matrix& input) = 0;
+	virtual Matrix& backward(Matrix& input, float lr) = 0;
 
 };

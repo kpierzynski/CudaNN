@@ -16,8 +16,8 @@ public:
     int getRows() const;
     int getColumns() const;
 
-    int getElement(int row, int column) const;
-    void setElement(int row, int column, int value);
+    float getElement(int row, int column) const;
+    void setElement(int row, int column, float value);
 
     Matrix transpose() const;
 

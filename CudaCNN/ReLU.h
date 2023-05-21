@@ -1,19 +1,16 @@
 #pragma once
 
+#include <iostream>
+
 #include "Layer.h"
+#include "Matrix.h"
 
-class ReLU : Layer {
+class ReLU : public Layer {
 public:
-	ReLU(int size) : Layer(size, size) {
+	ReLU(int size);
 
-	}
+	Matrix& forward(Matrix& data) override;
+	Matrix& backward(Matrix& gradient, float lr) override;
 
-	void forward(uint8_t* data) override {
-
-	}
-
-	void backward(uint8_t* gradient) override {
-
-	}
-
+	Matrix input;
 };

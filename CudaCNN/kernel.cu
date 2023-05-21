@@ -6,6 +6,7 @@
 
 #include "Network.h"
 #include "Linear.h"
+#include "ReLU.h"
 #include "MNISTSet.h"
 
 cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size);
@@ -23,8 +24,11 @@ int main()
     mnist.print(0);
 
     Network net;
-    net.addLayer(new Linear(28 * 28, 30));
-    net.addLayer(new Linear(30, 10));
+    net.addLayer(new Linear(28 * 28, 128));
+    net.addLayer(new ReLU(128));
+    net.addLayer(new Linear(128, 64));
+    net.addLayer(new ReLU(64));
+    net.addLayer(new Linear(64, 10));
 
     net.fit(mnist.images, mnist.labels, 0.01, 3);
 

@@ -2,27 +2,34 @@
 
 #include "Linear.h"
 
-Linear::Linear(int input_size, int output_size) : Layer(input_size, output_size) {
+Linear::Linear(int input_size, int output_size) : Layer(input_size, output_size), input(1,1) {
 	weights = new Matrix(input_size, output_size);
 	bias = new Matrix(1, output_size);
+
 }
 
-std::vector<float> Linear::forward(std::vector<float>& data) {
-	input = new Matrix(1, input_size, data);
+Matrix& Linear::forward(Matrix& input) {
+	//std::cout << "LINEAR input" << input.getColumns() << " " << input.getRows() << std::endl;
+	//std::cout << "LINEAR weights" << weights->getColumns() << " " << weights->getRows() << std::endl;
+	this->input = input;
 
-	Matrix output = ((*input) * (*weights)) + (*bias);
+	Matrix * output = new Matrix(input.getColumns(), weights->getRows());
+	*output = ((input) * (*weights)) + (*bias);
 
-	return output.data;
+	return *output;
 }
 
-std::vector<float> Linear::backward(std::vector<float>& gradient, float lr) {
-	Matrix m_gradient = Matrix(1, output_size, gradient);
-	Matrix input_errors = m_gradient * weights->transpose();
+Matrix& Linear::backward(Matrix& input, float lr) {
 
-	Matrix weights_errors = (*input).transpose() * m_gradient;
+	Matrix* input_errors = new Matrix(input.getColumns(), weights->getColumns());
+	*input_errors = input * weights->transpose();
+
+	//std::cout << "this->input" << this->input.getColumns() << " " << this->input.getRows() << std::endl;
+	//std::cout << "input" << input.getColumns() << " " << input.getRows() << std::endl;
+	Matrix weights_errors = (this->input).transpose() * input;
 
 	(*weights) -= weights_errors * lr;
-	(*bias) -= m_gradient * lr;
+	(*bias) -= input * lr;
 
-	return input_errors.data;
+	return *input_errors;
 }

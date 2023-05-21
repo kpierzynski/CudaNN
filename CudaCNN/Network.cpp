@@ -23,7 +23,7 @@ float Network::loss_function(std::vector<float>& y_real, std::vector<float>& y_p
 	return sum / size;
 }
 
-std::vector<float> Network::loss_deriv_function(std::vector<float>& y_real, std::vector<float>& y_pred) {
+Matrix& Network::loss_deriv_function(std::vector<float>& y_real, std::vector<float>& y_pred) {
 	if (y_real.size() != y_pred.size()) {
 		std::cout << "y_real.size(): " << y_real.size() << " y_pred.size(): " << y_pred.size() << std::endl;
 		throw std::invalid_argument("y sizes are different.");
@@ -34,7 +34,10 @@ std::vector<float> Network::loss_deriv_function(std::vector<float>& y_real, std:
 	Matrix m_y_real(1, size, y_real);
 	Matrix m_y_pred(1, size, y_pred);
 
-	return ((m_y_real - m_y_pred) * 2.0f / size).data;
+	Matrix* result = new Matrix(1, size);
+	*result = ((m_y_real - m_y_pred) * 2.0f / size);
+
+	return *result;
 }
 
 void Network::addLayer(Layer * layer) {
@@ -55,22 +58,29 @@ void Network::fit(std::vector<std::vector<float>>& x_input, std::vector<int>& y_
 
 			//FORWARD STEP
 
-			std::vector<float> data = x_input[i];
+			std::vector<float> v_data = x_input[i];
+			Matrix * data = new Matrix(1, x_input[i].size(), v_data);
 			// go through all layers and compute forward result
+
 			for (Layer * layer : layers) {
-				data = layer->forward(data);
+				*data = layer->forward(*data);
+				//std::cout << "Inside forward layer loop" << data->getColumns() << " " << data->getRows() << std::endl;
 			}
-			error = loss_function(one_hot_encoder(y_input[i]), data);
+			error = loss_function(one_hot_encoder(y_input[i]), data->data);
 
 			//BACKWARD STEP
-			std::vector<float> back_error = loss_deriv_function(one_hot_encoder(y_input[i]), data);
+			Matrix back_error = loss_deriv_function(one_hot_encoder(y_input[i]), data->data);
 
 			// loop over layers, but from end.
 			for (auto it = layers.rbegin(); it != layers.rend(); ++it) {
 				Layer * layer = *it;
 			
 				back_error = layer->backward(back_error, lr);
+				//std::cout << "BACKWARD loop" << back_error.getColumns() << " " << back_error.getRows() << std::endl;
+
 			}
+
+			delete data;
 		}
 
 		std::cout << "Epoch done: " << epoch << " error: " << error/size << std::endl;

@@ -89,6 +89,7 @@
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="MNISTSet.cpp" />
     <ClCompile Include="Network.cpp" />
+    <ClCompile Include="ReLU.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataSet.h" />
