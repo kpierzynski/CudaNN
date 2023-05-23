@@ -214,3 +214,7 @@ Tensor Tensor::operator/(float s) const
 Tensor operator*(float s, const Tensor& t) {
 	return t * s;
 }
+
+Tensor operator+(float s, const Tensor& t) {
+	return t + s;
+}
