@@ -23,9 +23,8 @@ void Network::backwardPass(Tensor input, float lr)
 
 class Loss {
 	public:
-	// y_t = y_true, y_r = y_real
-	static float calculate(Tensor y_t, Tensor y_r) {
-		Tensor diff = y_t - y_r;
+	static float calculate(Tensor y_pred, Tensor y_read) {
+		Tensor diff = y_pred - y_read;
 		Tensor loss = diff * diff;
 
 		float error = loss.mean();
@@ -33,8 +32,8 @@ class Loss {
 		return error;
 	}
 
-	static Tensor derivative(Tensor y_t, Tensor y_r) {
-		Tensor derivative = ((y_t - y_t) * 2.0f) / y_t.size();
+	static Tensor derivative(Tensor y_pred, Tensor y_real) {
+		Tensor derivative = ((y_pred - y_real) * 2.0f) / y_pred.size();
 		return derivative;
 	}
 };
