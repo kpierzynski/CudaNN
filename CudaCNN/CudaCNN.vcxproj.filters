@@ -6,10 +6,16 @@
   <ItemGroup>
     <ClCompile Include="MNISTSet.cpp" />
     <ClCompile Include="Tensor.cpp" />
+    <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="Linear.cpp" />
+    <ClCompile Include="Network.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="MNISTSet.h" />
     <ClInclude Include="Tensor.h" />
+    <ClInclude Include="Layer.h" />
+    <ClInclude Include="Linear.h" />
+    <ClInclude Include="Network.h" />
   </ItemGroup>
 </Project>

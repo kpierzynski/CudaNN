@@ -51,9 +51,15 @@ MNISTSet::MNISTSet(const std::string& images_path, const std::string& labels_pat
 		labels_file.read((char*)&label_data, 1);
 
 		for (int i = 0; i < w * h; i++) f_image_data.push_back(image_data[i] / 255.0f);
+		Tensor t_image(1, w * h);
+		t_image.set_from(f_image_data);
 
-		images.push_back(f_image_data);
-		labels.push_back(label_data);
+		Tensor t_label(1, 10);
+		t_label.set_from({ 0,0,0,0,0,0,0,0,0,0 });
+		t_label.set(0, label_data, 1);
+
+		images.push_back(t_image);
+		labels.push_back(t_label);
 
 		delete[] image_data;
 	}
@@ -74,7 +80,7 @@ void MNISTSet::print(int index) {
 		const char asciiChars[] = " .:-=+*#%@";
 		for (int y = 0; y < 28; ++y) {
 		for (int x = 0; x < 28; ++x) {
-			float pixel = images[index][y * 28 + x] * 255;
+			float pixel = images[index].get(0,y * 28 + x) * 255;
 			float charIndex = pixel / 26;
 				std::cout << asciiChars[(int)charIndex];
 		}

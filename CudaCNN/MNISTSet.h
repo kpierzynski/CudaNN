@@ -7,13 +7,15 @@
 #include <fstream>
 #include <filesystem>
 
+#include "Tensor.h"
+
 #define DEBUG 1
 
 class MNISTSet {
 public:
 
-	std::vector<int> labels;
-	std::vector<std::vector<float>> images;
+	std::vector<Tensor> labels;
+	std::vector<Tensor> images;
 
 	int item_count;
 

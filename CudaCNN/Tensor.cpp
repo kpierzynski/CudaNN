@@ -2,12 +2,13 @@
 
 Tensor::Tensor(int rows, int cols) : rows(rows), cols(cols) {
 	data = new float[rows * cols];
+	set_random();
 }
 
-Tensor::Tensor(const Tensor& other) : rows(other.rows), cols(other.cols) {
+Tensor::Tensor(const Tensor& t) : rows(t.rows), cols(t.cols) {
 	data = new float[rows * cols];
 
-	std::copy(other.data, other.data + (rows * cols), data);
+	std::copy(t.data, t.data + (rows * cols), data);
 }
 
 Tensor::~Tensor()
@@ -27,8 +28,20 @@ void Tensor::set_from(const std::vector<float>& data)
 	}
 }
 
-void Tensor::print() {
+void Tensor::set_random()
+{
+	std::random_device dev;
+	std::mt19937 gen(dev());
 
+	std::uniform_real_distribution<float> unif(-0.5, 0.5);
+
+	for (int i = 0; i < rows * cols; i++) {
+		data[i] = unif(gen);
+	}
+}
+
+void Tensor::print() 
+{
 	for (int r = 0; r < rows; r++) {
 		for (int c = 0; c < cols; c++) {
 			std::cout << data[r * cols + c] << " ";
@@ -38,7 +51,7 @@ void Tensor::print() {
 	std::cout << std::endl;
 }
 
-int Tensor::size()
+int Tensor::size() const
 {
 	return rows * cols;
 }
@@ -51,6 +64,29 @@ float Tensor::get(int row, int col) const
 void Tensor::set(int row, int col, float value)
 {
 	data[row * cols + col] = value;
+}
+
+float Tensor::mean() const
+{
+	float sum = 0.0f;
+	for (int i = 0; i < this->size(); i++) {
+		sum += data[i];
+	}
+
+	return sum / size();
+}
+
+Tensor Tensor::transpose() const
+{
+	Tensor result(cols, rows);
+
+	for (int i = 0; i < rows; ++i) {
+		for (int j = 0; j < cols; ++j) {
+			result.set(j, i, get(i, j));
+		}
+	}
+
+	return result;
 }
 
 Tensor& Tensor::operator-=(float s)
@@ -151,6 +187,50 @@ Tensor Tensor::operator+(const Tensor& t) const
 	return result;
 }
 
+Tensor& Tensor::operator+=(const Tensor& t)
+{
+	if (rows != t.rows || cols != t.cols) {
+		throw std::invalid_argument("Cannot add tensor. Wrong dimensions.");
+	}
+
+	for (int i = 0; i < rows * cols; i++) {
+		data[i] += t.data[i];
+	}
+
+	return *this;
+}
+
+Tensor& Tensor::operator-=(const Tensor& t)
+{
+	if (rows != t.rows || cols != t.cols) {
+		throw std::invalid_argument("Cannot subtract tensor. Wrong dimensions.");
+	}
+
+	for (int i = 0; i < rows * cols; i++) {
+		data[i] -= t.data[i];
+	}
+
+	return *this;
+}
+
+Tensor& Tensor::operator=(const Tensor& t)
+{
+	if (this == &t) {
+		return *this;
+	}
+
+	delete[] data;
+
+	rows = t.rows;
+	cols = t.cols;
+
+	data = new float[rows * cols];
+
+	std::copy(t.data, t.data + (rows * cols), data);
+
+	return *this;
+}
+
 Tensor Tensor::operator*(float s) const
 {
 	Tensor result(rows, cols);
@@ -217,4 +297,17 @@ Tensor operator*(float s, const Tensor& t) {
 
 Tensor operator+(float s, const Tensor& t) {
 	return t + s;
+}
+
+std::ostream& operator<<(std::ostream& stream, const Tensor& t)
+{
+	for (int r = 0; r < t.rows; r++) {
+		for (int c = 0; c < t.cols; c++) {
+			stream << t.data[r * t.cols + c] << " ";
+		}
+		stream << std::endl;
+	}
+	stream << std::endl;
+
+	return stream;
 }

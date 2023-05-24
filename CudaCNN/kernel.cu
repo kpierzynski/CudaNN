@@ -4,22 +4,22 @@
 
 #include <stdio.h>
 #include "Tensor.h"
+#include "Network.h"
+#include "Linear.h"
+#include "MNISTSet.h"
 
 
 int main()
 {
+	MNISTSet mnist(std::string("C:\\MNIST\\train-images.idx3-ubyte"), std::string("C:\\MNIST\\train-labels.idx1-ubyte"));
+	mnist.print(0);
 
-	Tensor p(2, 4);
-	p.set_from({ 1,2,3,4,0,-3,2.5,1.3 });
-	p.print();
+	Layer* p = new Linear(28 * 28, 10);
 
-	Tensor r(4, 3);
-	r.set_from({ 1,-1.5,0, 2.1,2,0, -4,3,7, -1,0.5,-2 });
-	r.print();
+	Network net;
+	net.addLayer(p);
 
-	(p * r).print();
-
-
+	net.fit(mnist.images, mnist.labels, 0.01, 3);
 
 	return 0;
 }
