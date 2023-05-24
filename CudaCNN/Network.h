@@ -1,23 +1,20 @@
 #pragma once
 
+#include <iostream>
 #include <vector>
 
 #include "Layer.h"
+#include "Tensor.h"
 
 class Network {
-public:
-	Network();
-
-	void addLayer(Layer * layer);
-	void fit(std::vector<std::vector<float>>& x_input, std::vector<int>& y_input, float lr, int epochs);
-	void predict();
-
-private:
+	private:
 	std::vector<Layer*> layers;
 
-	float Network::loss_function(std::vector<float>& y_real, std::vector<float>& y_pred);
-	Matrix& Network::loss_deriv_function(std::vector<float>& y_real, std::vector<float>& y_pred);
+	public:
+	void addLayer(Layer* layer);
 
-	std::vector<float> Network::one_hot_encoder(int label);
+	Tensor forwardPass(Tensor input);
+	void backwardPass(Tensor input, float lr);
 
+	void fit(std::vector<Tensor> x, std::vector<Tensor> y, float lr, int epochs);
 };

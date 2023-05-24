@@ -1,17 +1,20 @@
 #pragma once
 
+#include <iostream>
+
+#include "Tensor.h"
 #include "Layer.h"
-#include "Matrix.h"
 
 class Linear : public Layer {
-public:
+	public:
 	Linear(int input_size, int output_size);
 
-	Matrix& forward(Matrix& data) override;
-	Matrix& backward(Matrix& gradient, float lr) override;
-private:
-	Matrix * weights;
-	Matrix * bias;
+	Tensor forward(Tensor& input) override;
+	Tensor backward(Tensor& input, float lr) override;
 
-	Matrix input;
+	private:
+	Tensor weights;
+	Tensor biases;
+	Tensor input;
+
 };

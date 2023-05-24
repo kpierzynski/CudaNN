@@ -4,24 +4,18 @@
     <CudaCompile Include="kernel.cu" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DataSet.cpp" />
-    <ClCompile Include="Layer.cpp" />
-    <ClCompile Include="Network.cpp" />
     <ClCompile Include="MNISTSet.cpp" />
+    <ClCompile Include="Tensor.cpp" />
+    <ClCompile Include="Layer.cpp" />
     <ClCompile Include="Linear.cpp" />
-    <ClCompile Include="Matrix.cpp" />
-    <ClCompile Include="ReLU.cpp" />
+    <ClCompile Include="Network.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DataSet.h" />
-    <ClInclude Include="Layer.h" />
     <ClInclude Include="stb_image.h" />
-    <ClInclude Include="Network.h" />
     <ClInclude Include="MNISTSet.h" />
+    <ClInclude Include="Tensor.h" />
+    <ClInclude Include="Layer.h" />
     <ClInclude Include="Linear.h" />
-    <ClInclude Include="Matrix.h" />
-    <ClInclude Include="ReLU.h" />
-    <ClInclude Include="Softmax.h" />
-    <ClInclude Include="LossFunction.h" />
+    <ClInclude Include="Network.h" />
   </ItemGroup>
 </Project>
