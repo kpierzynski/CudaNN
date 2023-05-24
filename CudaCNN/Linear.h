@@ -15,5 +15,6 @@ class Linear : public Layer {
 	private:
 	Tensor weights;
 	Tensor biases;
+	Tensor input;
 
 };

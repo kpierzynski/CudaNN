@@ -131,24 +131,35 @@ Tensor& Tensor::operator/=(float s)
 
 Tensor Tensor::operator*(const Tensor& t) const
 {
-	if (cols != t.rows) {
-		throw std::invalid_argument("Cannot perform matrix multiplcation. Wrong dimentions");
-	}
+	if (cols == t.cols && rows == t.rows) {
+		Tensor result(rows, cols);
 
-	Tensor result(rows, t.cols);
-
-	for (int i = 0; i < rows; i++) {
-		for (int j = 0; j < t.cols; j++) {
-			float value = 0.0f;
-			for (int k = 0; k < cols; k++) {
-				value += get(i, k) * t.get(k, j);
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				float value = get(i, j) * t.get(i, j);
+				result.set(i, j, value);
 			}
-			result.set(i, j, value);
 		}
+
+		return result;
 	}
+	else if (cols == t.rows) {
+		Tensor result(rows, t.cols);
 
-	return result;
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < t.cols; j++) {
+				float value = 0.0f;
+				for (int k = 0; k < cols; k++) {
+					value += get(i, k) * t.get(k, j);
+				}
+				result.set(i, j, value);
+			}
+		}
 
+		return result;
+	} else {
+		throw std::invalid_argument("Cannot perform matrix multiplcation. Wrong dimentions");
+	}	
 }
 
 Tensor Tensor::operator-(const Tensor& t) const

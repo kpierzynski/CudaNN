@@ -1,15 +1,17 @@
 #include "Linear.h"
 
-Linear::Linear(int input_size, int output_size) : 
-	Layer(input_size, output_size), 
-	weights(Tensor(input_size,output_size)), 
-	biases(Tensor(1,output_size))
+Linear::Linear(int input_size, int output_size) :
+	Layer(input_size, output_size),
+	weights(Tensor(input_size, output_size)),
+	biases(Tensor(1, output_size)),
+	input(Tensor(1, input_size))
 {
 
 }
 
 Tensor Linear::forward(Tensor& input)
 {
+	this->input = input;
 	Tensor output = input * weights;
 
 	output += biases;
@@ -17,12 +19,16 @@ Tensor Linear::forward(Tensor& input)
 	return output;
 }
 
-Tensor Linear::backward(Tensor& input, float lr)
+Tensor Linear::backward(Tensor& gradient, float lr)
 {
-	Tensor inputGradient = weights * input.transpose();
-	weights -= (inputGradient * input) * lr;
-	biases -= inputGradient * lr;
+	Tensor wGradient = input.transpose() * gradient;
+	Tensor bGradient = gradient;
 
-	return inputGradient;
+	weights -= wGradient * lr;
+	biases -= bGradient * lr;
+
+	Tensor output = gradient * weights.transpose();
+
+	return output;
 }
 

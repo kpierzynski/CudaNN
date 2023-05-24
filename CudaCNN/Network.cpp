@@ -26,7 +26,7 @@ class Loss {
 	// y_t = y_true, y_r = y_real
 	static float calculate(Tensor y_t, Tensor y_r) {
 		Tensor diff = y_t - y_r;
-		Tensor loss = diff * diff.transpose();
+		Tensor loss = diff * diff;
 
 		float error = loss.mean();
 
