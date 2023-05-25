@@ -9,6 +9,7 @@
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="Linear.cpp" />
     <ClCompile Include="Network.cpp" />
+    <ClCompile Include="Tanh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h" />
@@ -17,5 +18,6 @@
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Linear.h" />
     <ClInclude Include="Network.h" />
+    <ClInclude Include="Tanh.h" />
   </ItemGroup>
 </Project>

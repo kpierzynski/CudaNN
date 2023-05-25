@@ -1,6 +1,6 @@
 #include "MNISTSet.h"
 
-MNISTSet::MNISTSet(const std::string& images_path, const std::string& labels_path) {
+MNISTSet::MNISTSet(const std::string& images_path, const std::string& labels_path, int cnt) {
 	std::ifstream images_file(images_path, std::ios::binary);
 	std::ifstream labels_file(labels_path, std::ios::binary);
 
@@ -41,7 +41,9 @@ MNISTSet::MNISTSet(const std::string& images_path, const std::string& labels_pat
 	std::cout << "Start reading images, #" << images_count << " (" << w << "," << h << ")" << std::endl;
 #endif
 
-	for (int i = 0; i < 1000; i++) {
+	item_count = (cnt < images_count) ? cnt : images_count;
+
+	for (int i = 0; i < item_count; i++) {
 		uint8_t* image_data = new uint8_t[w * h];
 		std::vector<float> f_image_data;
 
@@ -68,8 +70,13 @@ MNISTSet::MNISTSet(const std::string& images_path, const std::string& labels_pat
 	std::cout << "Done reading images" << std::endl;
 #endif
 
-	//item_count = images_count;
-	item_count = 1000;
+	auto seed = unsigned(std::time(0));
+
+	std::srand(seed);
+	std::random_shuffle(images.begin(), images.end());
+
+	std::srand(seed);
+	std::random_shuffle(labels.begin(), labels.end());
 
 	images_file.close();
 	labels_file.close();

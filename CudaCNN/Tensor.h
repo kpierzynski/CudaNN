@@ -13,12 +13,13 @@ class Tensor {
 	int rows;
 	int cols;
 
-public:
+	public:
 	Tensor(int rows, int cols);
 	Tensor(const Tensor& other);
 	~Tensor();
 
-	void set_from( const std::vector<float>& data);
+	void set_from(const std::vector<float>& data);
+	void set_from(const float* data, int size);
 	void set_random();
 
 	void print();		// print tensor
@@ -48,6 +49,8 @@ public:
 	Tensor& operator-=(const Tensor& t);
 
 	Tensor& operator=(const Tensor& t);
+	bool operator==(const Tensor& t);
+	bool operator!=(const Tensor& t);
 
 	friend std::ostream& operator<< (std::ostream& stream, const Tensor& t);
 };

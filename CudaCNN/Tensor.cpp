@@ -58,11 +58,13 @@ int Tensor::size() const
 
 float Tensor::get(int row, int col) const
 {
+	// add bound check
 	return data[row * cols + col];
 }
 
 void Tensor::set(int row, int col, float value)
 {
+	// add bound check
 	data[row * cols + col] = value;
 }
 
@@ -144,19 +146,19 @@ Tensor Tensor::operator*(const Tensor& t) const
 		return result;
 	}
 	else if (cols == t.rows) {
-		Tensor result(rows, t.cols);
+			Tensor result(rows, t.cols);
 
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < t.cols; j++) {
-				float value = 0.0f;
-				for (int k = 0; k < cols; k++) {
-					value += get(i, k) * t.get(k, j);
+			for (int i = 0; i < rows; i++) {
+				for (int j = 0; j < t.cols; j++) {
+					float value = 0.0f;
+					for (int k = 0; k < cols; k++) {
+						value += get(i, k) * t.get(k, j);
+					}
+					result.set(i, j, value);
 				}
-				result.set(i, j, value);
 			}
-		}
 
-		return result;
+			return result;
 	} else {
 		throw std::invalid_argument("Cannot perform matrix multiplcation. Wrong dimentions");
 	}	
@@ -240,6 +242,22 @@ Tensor& Tensor::operator=(const Tensor& t)
 	std::copy(t.data, t.data + (rows * cols), data);
 
 	return *this;
+}
+
+bool Tensor::operator==(const Tensor& t)
+{
+	if (rows != t.rows || cols != t.cols) return false;
+
+	for (int i = 0; i < rows * cols; i++) {
+		if (data[i] != t.data[i]) return false;
+	}
+
+	return true;
+}
+
+bool Tensor::operator!=(const Tensor& t)
+{
+	return !(*this == t);
 }
 
 Tensor Tensor::operator*(float s) const

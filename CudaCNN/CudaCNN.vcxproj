@@ -87,6 +87,7 @@
     <ClCompile Include="Linear.cpp" />
     <ClCompile Include="MNISTSet.cpp" />
     <ClCompile Include="Network.cpp" />
+    <ClCompile Include="Tanh.cpp" />
     <ClCompile Include="Tensor.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +95,7 @@
     <ClInclude Include="Linear.h" />
     <ClInclude Include="MNISTSet.h" />
     <ClInclude Include="Network.h" />
+    <ClInclude Include="Tanh.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Tensor.h" />
   </ItemGroup>

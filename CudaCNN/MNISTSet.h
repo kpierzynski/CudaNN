@@ -19,7 +19,7 @@ public:
 
 	int item_count;
 
-	MNISTSet(const std::string& images_path, const std::string& labels_path);
+	MNISTSet(const std::string& images_path, const std::string& labels_path, int cnt);
 	~MNISTSet();
 
 	void print(int index);

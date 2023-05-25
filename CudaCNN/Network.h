@@ -16,5 +16,7 @@ class Network {
 	Tensor forwardPass(Tensor input);
 	void backwardPass(Tensor input, float lr);
 
-	void fit(std::vector<Tensor> x, std::vector<Tensor> y, float lr, int epochs);
+	void fit(std::vector<Tensor>& x_train, std::vector<Tensor>& y_train, float lr, int epochs);
+	float evaluate(std::vector<Tensor>& x_test, std::vector<Tensor>& y_test);
+	Tensor predict(Tensor input);
 };
