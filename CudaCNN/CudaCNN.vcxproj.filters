@@ -10,6 +10,7 @@
     <ClCompile Include="Linear.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="Tanh.cpp" />
+    <ClCompile Include="ReLU.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h" />
@@ -19,5 +20,6 @@
     <ClInclude Include="Linear.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="Tanh.h" />
+    <ClInclude Include="ReLU.h" />
   </ItemGroup>
 </Project>

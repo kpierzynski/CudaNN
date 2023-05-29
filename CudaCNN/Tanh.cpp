@@ -7,8 +7,10 @@ Tensor Tanh::forward(Tensor& input) {
     this->input = input;
     Tensor output = input;
 
-    for (int i = 0; i < output.cols; i++) {
-        output.set(0, i, tanh(input.get(0, i)) );
+    for (int i = 0; i < output.rows; i++) {
+        for (int j = 0; j < output.cols; j++) {
+            output.set(i, j, tanh(input.get(i, j)));
+        }
     }
 
     return output;
@@ -17,8 +19,10 @@ Tensor Tanh::forward(Tensor& input) {
 Tensor Tanh::backward(Tensor& gradient, float lr) {
     Tensor output = input;
 
-    for (int i = 0; i < output.cols; i++) {
-        output.set(0, i, tanh(input.get(0, i)));
+    for (int i = 0; i < output.rows; i++) {
+        for (int j = 0; j < output.cols; j++) {
+            output.set(i, j, tanh(input.get(i, j)));
+        }
     }
 
     output = output * output * -1.0f + 1;

@@ -21,10 +21,10 @@ void Network::backwardPass(Tensor input, float lr)
 	}
 }
 
-class Loss {
+class LossMSE {
 	public:
-	static float calculate(Tensor y_pred, Tensor y_read) {
-		Tensor diff = y_pred - y_read;
+	static float calculate(Tensor y_pred, Tensor y_real) {
+		Tensor diff = y_pred - y_real;
 		Tensor loss = diff * diff;
 
 		float error = loss.mean();
@@ -33,7 +33,7 @@ class Loss {
 	}
 
 	static Tensor derivative(Tensor y_pred, Tensor y_real) {
-		Tensor derivative = ((y_pred - y_real) * 2.0f) / y_pred.size();
+		Tensor derivative = ((y_pred - y_real) * 2.0f) / y_pred.cols;
 		return derivative;
 	}
 };
@@ -49,34 +49,35 @@ void Network::fit(std::vector<Tensor>& x_train, std::vector<Tensor>& y_train, fl
 
 		for (int i = 0; i < x_train.size(); i++) {
 			Tensor output = forwardPass(x_train[i]);
-			loss = Loss::calculate(output, y_train[i]);
 
-			Tensor lossDerivative = Loss::derivative(output, y_train[i]);
+			loss = LossMSE::calculate(output, y_train[i]);
+			Tensor lossDerivative = LossMSE::derivative(output, y_train[i]);
 			backwardPass(lossDerivative, lr);
 
-			printf("step: %d, loss: %f                                    \r", i, loss);
+			printf("step: %d, loss: %f                                               \r", i, loss);
 		}
 
-		std::cout << "Epoch: " << epoch << " Loss: " << loss << std::endl;
+		std::cout << "Epoch: " << epoch << " Loss: " << loss << "                 " << std::endl;
 	}
 }
 
 
 Tensor convert(Tensor& t) {
-	Tensor result(1, t.cols);
-	int pos = 0;
+	Tensor result(t.rows, t.cols);
+	for (int r = 0; r < t.rows; r++) {
+		int pos = 0;
 
-	for (int i = 0; i < t.cols; i++) {
-		if (t.get(0, i) > t.get(0, pos))
-			pos = i;
+		for (int i = 0; i < t.cols; i++) {
+			if (t.get(r, i) > t.get(r, pos))
+				pos = i;
+		}
+
+		for (int i = 0; i < t.cols; i++) {
+			result.set(r, i, 0.0f);
+
+			if (i == pos) result.set(r, i, 1.0f);
+		}
 	}
-
-	for (int i = 0; i < t.cols; i++) {
-		result.set(0, i, 0.0f);
-
-		if (i == pos) result.set(0, i, 1.0f);
-	}
-
 	return result;
 }
 
@@ -93,15 +94,17 @@ float Network::evaluate(std::vector<Tensor>& x_test, std::vector<Tensor>& y_test
 		Tensor output = forwardPass(x_test[i]);
 		Tensor result = convert(output);
 
-		if (result == y_test[i]) correct_predictions++;
+		for (int k = 0; k < y_test[i].rows; k++) {
+			if (result[k] == y_test[i][k]) correct_predictions++;
+			total_predictions++;
+		}
 
-		total_predictions++;
 	}
 
 	float accuracy = ((float)correct_predictions / total_predictions) * 100.0f;
 
 	std::cout << "Evaluation Results: " << std::endl;
-	std::cout << "Total Samples: " << x_test.size() << std::endl;
+	std::cout << "Total Samples: " << x_test.size() * x_test[0].rows << std::endl;
 	std::cout << "Correct predictions: " << correct_predictions << std::endl;
 	std::cout << "Accuracy: " << accuracy << "%" << std::endl;
 

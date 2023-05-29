@@ -40,7 +40,7 @@ void Tensor::set_random()
 	}
 }
 
-void Tensor::print() 
+void Tensor::print()
 {
 	for (int r = 0; r < rows; r++) {
 		for (int c = 0; c < cols; c++) {
@@ -76,6 +76,21 @@ float Tensor::mean() const
 	}
 
 	return sum / size();
+}
+
+Tensor Tensor::sum_rows() const
+{
+	Tensor result(1, cols);
+
+	for (int c = 0; c < cols; c++) {
+		float sum = 0.0f;
+		for (int r = 0; r < rows; r++) {
+			sum += get(r, c);
+		}
+		result.set(0, c, sum);
+	}
+
+	return result;
 }
 
 Tensor Tensor::transpose() const
@@ -146,22 +161,23 @@ Tensor Tensor::operator*(const Tensor& t) const
 		return result;
 	}
 	else if (cols == t.rows) {
-			Tensor result(rows, t.cols);
+		Tensor result(rows, t.cols);
 
-			for (int i = 0; i < rows; i++) {
-				for (int j = 0; j < t.cols; j++) {
-					float value = 0.0f;
-					for (int k = 0; k < cols; k++) {
-						value += get(i, k) * t.get(k, j);
-					}
-					result.set(i, j, value);
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < t.cols; j++) {
+				float value = 0.0f;
+				for (int k = 0; k < cols; k++) {
+					value += get(i, k) * t.get(k, j);
 				}
+				result.set(i, j, value);
 			}
+		}
 
-			return result;
-	} else {
+		return result;
+	}
+	else {
 		throw std::invalid_argument("Cannot perform matrix multiplcation. Wrong dimentions");
-	}	
+	}
 }
 
 Tensor Tensor::operator-(const Tensor& t) const
@@ -202,12 +218,18 @@ Tensor Tensor::operator+(const Tensor& t) const
 
 Tensor& Tensor::operator+=(const Tensor& t)
 {
-	if (rows != t.rows || cols != t.cols) {
-		throw std::invalid_argument("Cannot add tensor. Wrong dimensions.");
+	if (cols == t.cols && t.rows == 1) {
+		for (int i = 0; i < rows * cols; i++) {
+			data[i] += t.data[i % t.cols];
+		}
 	}
-
-	for (int i = 0; i < rows * cols; i++) {
-		data[i] += t.data[i];
+	else if (rows == t.rows && cols == t.cols) {
+		for (int i = 0; i < rows * cols; i++) {
+			data[i] += t.data[i];
+		}
+	}
+	else {
+		throw std::invalid_argument("Cannot add tensor. Wrong dimensions.");
 	}
 
 	return *this;
@@ -215,12 +237,18 @@ Tensor& Tensor::operator+=(const Tensor& t)
 
 Tensor& Tensor::operator-=(const Tensor& t)
 {
-	if (rows != t.rows || cols != t.cols) {
-		throw std::invalid_argument("Cannot subtract tensor. Wrong dimensions.");
+	if (cols == t.cols && t.rows == 1) {
+		for (int i = 0; i < rows * cols; i++) {
+			data[i] -= t.data[i % t.cols];
+		}
 	}
-
-	for (int i = 0; i < rows * cols; i++) {
-		data[i] -= t.data[i];
+	else if (rows == t.rows && cols == t.cols) {
+		for (int i = 0; i < rows * cols; i++) {
+			data[i] -= t.data[i];
+		}
+	}
+	else {
+		throw std::invalid_argument("Cannot subtract tensor. Wrong dimensions.");
 	}
 
 	return *this;
@@ -258,6 +286,17 @@ bool Tensor::operator==(const Tensor& t)
 bool Tensor::operator!=(const Tensor& t)
 {
 	return !(*this == t);
+}
+
+Tensor Tensor::operator[](const int row) const
+{
+	Tensor result(1, cols);
+
+	for (int i = 0; i < cols; i++) {
+		result.set(0, i, get(row, i));
+	}
+
+	return result;
 }
 
 Tensor Tensor::operator*(float s) const

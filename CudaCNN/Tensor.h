@@ -29,6 +29,7 @@ class Tensor {
 	void set(int row, int col, float value);
 
 	float mean() const;
+	Tensor sum_rows() const;
 	Tensor transpose() const;
 
 	Tensor& operator-=(float s);
@@ -51,6 +52,8 @@ class Tensor {
 	Tensor& operator=(const Tensor& t);
 	bool operator==(const Tensor& t);
 	bool operator!=(const Tensor& t);
+
+	Tensor operator[](const int row) const;
 
 	friend std::ostream& operator<< (std::ostream& stream, const Tensor& t);
 };

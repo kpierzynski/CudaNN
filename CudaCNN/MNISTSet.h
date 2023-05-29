@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <random>
 
 #include "Tensor.h"
 
@@ -19,10 +20,10 @@ public:
 
 	int item_count;
 
-	MNISTSet(const std::string& images_path, const std::string& labels_path, int cnt);
+	MNISTSet(const std::string& images_path, const std::string& labels_path, int batch_size, int cnt);
 	~MNISTSet();
 
-	void print(int index);
+	void print(int index, int batch);
 
 private:
 	int reverse(int value);

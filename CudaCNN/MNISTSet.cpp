@@ -1,6 +1,6 @@
 #include "MNISTSet.h"
 
-MNISTSet::MNISTSet(const std::string& images_path, const std::string& labels_path, int cnt) {
+MNISTSet::MNISTSet(const std::string& images_path, const std::string& labels_path, int batch_size, int cnt) {
 	std::ifstream images_file(images_path, std::ios::binary);
 	std::ifstream labels_file(labels_path, std::ios::binary);
 
@@ -37,38 +37,44 @@ MNISTSet::MNISTSet(const std::string& images_path, const std::string& labels_pat
 		throw std::runtime_error("Wrong item amount between labels and data.");
 	}
 
-#if DEBUG == 1
+	#if DEBUG == 1
 	std::cout << "Start reading images, #" << images_count << " (" << w << "," << h << ")" << std::endl;
-#endif
+	#endif
 
 	item_count = (cnt < images_count) ? cnt : images_count;
 
-	for (int i = 0; i < item_count; i++) {
-		uint8_t* image_data = new uint8_t[w * h];
+	for (int b = 0; b < item_count / batch_size; b++) {
+		Tensor t_label(batch_size, 10);
+		Tensor t_image(batch_size, w * h);
+
 		std::vector<float> f_image_data;
+		std::vector<float> f_label;
 
-		uint8_t label_data;
+		for (int i = 0; i < batch_size; i++) {
+			uint8_t* image_data = new uint8_t[w * h];
 
-		images_file.read((char*)image_data, w * h);
-		labels_file.read((char*)&label_data, 1);
+			uint8_t label_data;
 
-		for (int i = 0; i < w * h; i++) f_image_data.push_back(image_data[i] / 255.0f);
-		Tensor t_image(1, w * h);
+			images_file.read((char*)image_data, w * h);
+			labels_file.read((char*)&label_data, 1);
+
+			for (int k = 0; k < w * h; k++) f_image_data.push_back(image_data[k] / 255.0f);
+			for (int k = 0; k < 10; k++) {
+				f_label.push_back((k == label_data) ? 1 : 0);
+			}
+
+			delete[] image_data;
+		}
 		t_image.set_from(f_image_data);
-
-		Tensor t_label(1, 10);
-		t_label.set_from({ 0,0,0,0,0,0,0,0,0,0 });
-		t_label.set(0, label_data, 1);
+		t_label.set_from(f_label);
 
 		images.push_back(t_image);
 		labels.push_back(t_label);
-
-		delete[] image_data;
 	}
 
-#if DEBUG == 1
+	#if DEBUG == 1
 	std::cout << "Done reading images" << std::endl;
-#endif
+	#endif
 
 	auto seed = unsigned(std::time(0));
 
@@ -82,14 +88,14 @@ MNISTSet::MNISTSet(const std::string& images_path, const std::string& labels_pat
 	labels_file.close();
 }
 
-void MNISTSet::print(int index) {
-	std::cout << "Image at position: " << index << " has label: " << labels[index] << std::endl;
-		const char asciiChars[] = " .:-=+*#%@";
-		for (int y = 0; y < 28; ++y) {
+void MNISTSet::print(int index, int batch) {
+	std::cout << "Image at position: " << index << " has label: " << labels[index][batch] << std::endl;
+	const char asciiChars[] = " .:-=+*#%@";
+	for (int y = 0; y < 28; ++y) {
 		for (int x = 0; x < 28; ++x) {
-			float pixel = images[index].get(0,y * 28 + x) * 255;
+			float pixel = images[index].get(batch, y * 28 + x) * 255;
 			float charIndex = pixel / 26;
-				std::cout << asciiChars[(int)charIndex];
+			std::cout << asciiChars[(int)charIndex];
 		}
 		std::cout << std::endl;
 	}
