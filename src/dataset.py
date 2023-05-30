@@ -2,17 +2,26 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
+from torchvision import transforms
 
 
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self) -> None:
-        pass
+    def __init__(self, images_file_path: str, labels_file_path: str) -> None:
+        self.images = self.__read_images(images_file_path)
+        self.labels = self.__read_labels(labels_file_path)
 
     def __getitem__(self, idx: int) -> tuple[(torch.Tensor | np.ndarray), int]:  # TODO needs to decide image type
-        image, label = None
+        image, label = self.images[idx], self.labels[idx]
+
+        # image = torch.from_numpy(image).float()
+        image = transforms.ToTensor()(np.array(image))
+
         return image, label
 
-    def read_images(self, file_path: str) -> np.ndarray:
+    def __len__(self) -> int:
+        return len(self.images)
+
+    def __read_images(self, file_path: str) -> np.ndarray:
         file_path = Path(file_path)
         with open(file_path, "rb") as f:
             _ = int.from_bytes(f.read(4), "big")
@@ -25,7 +34,7 @@ class Dataset(torch.utils.data.Dataset):
         images = images.reshape(num_images, num_rows, num_cols)
         return images
 
-    def read_labels(self, file_path: str) -> np.ndarray:
+    def __read_labels(self, file_path: str) -> np.ndarray:
         file_path = Path(file_path)
         with open(file_path, "rb") as f:
             _ = int.from_bytes(f.read(4), "big")
@@ -53,7 +62,7 @@ if __name__ == "__main__":
 
     dataset = Dataset()
 
-    images = dataset.read_images(images_file_path)
-    labels = dataset.read_labels(labels_file_path)
+    images = dataset.__read_images(images_file_path)
+    labels = dataset.__read_labels(labels_file_path)
 
     dataset.display_images(images, labels)
