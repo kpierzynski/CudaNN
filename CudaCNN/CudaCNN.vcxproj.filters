@@ -2,12 +2,12 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <CudaCompile Include="kernel.cu" />
+    <CudaCompile Include="Linear.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MNISTSet.cpp" />
     <ClCompile Include="Tensor.cpp" />
     <ClCompile Include="Layer.cpp" />
-    <ClCompile Include="Linear.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="Tanh.cpp" />
     <ClCompile Include="ReLU.cpp" />

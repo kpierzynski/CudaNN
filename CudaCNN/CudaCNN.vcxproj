@@ -48,7 +48,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -84,7 +84,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Layer.cpp" />
-    <ClCompile Include="Linear.cpp" />
+    <CudaCompile Include="Linear.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
     <ClCompile Include="MNISTSet.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="ReLU.cpp" />

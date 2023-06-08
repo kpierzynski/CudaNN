@@ -42,6 +42,7 @@ void Tensor::set_random()
 
 void Tensor::print()
 {
+	std::cout << std::endl;
 	for (int r = 0; r < rows; r++) {
 		for (int c = 0; c < cols; c++) {
 			std::cout << data[r * cols + c] << " ";
@@ -160,6 +161,7 @@ Tensor Tensor::operator*(const Tensor& t) const
 
 		return result;
 	}
+
 	else if (cols == t.rows) {
 		Tensor result(rows, t.cols);
 

@@ -1,4 +1,5 @@
 #include "Network.h"
+#include <chrono>
 
 void Network::addLayer(Layer* layer)
 {
@@ -38,6 +39,8 @@ class LossMSE {
 	}
 };
 
+using namespace std::chrono;
+
 void Network::fit(std::vector<Tensor>& x_train, std::vector<Tensor>& y_train, float lr, int epochs)
 {
 	if (x_train.size() != y_train.size()) {
@@ -45,11 +48,13 @@ void Network::fit(std::vector<Tensor>& x_train, std::vector<Tensor>& y_train, fl
 	}
 
 	for (int epoch = 0; epoch < epochs; epoch++) {
+		auto start = high_resolution_clock::now();
 		float loss = 0.0f;
 
 		for (int i = 0; i < x_train.size(); i++) {
 			Tensor output = forwardPass(x_train[i]);
-
+			//output.print();
+			
 			loss = LossMSE::calculate(output, y_train[i]);
 			Tensor lossDerivative = LossMSE::derivative(output, y_train[i]);
 			backwardPass(lossDerivative, lr);
@@ -57,7 +62,10 @@ void Network::fit(std::vector<Tensor>& x_train, std::vector<Tensor>& y_train, fl
 			printf("step: %d, loss: %f                                               \r", i, loss);
 		}
 
-		std::cout << "Epoch: " << epoch << " Loss: " << loss << "                 " << std::endl;
+		auto stop = high_resolution_clock::now();
+		auto duration = duration_cast<microseconds>(stop - start);
+
+		std::cout << "Epoch: " << epoch << " duration: " << duration.count() << " Loss: " << loss << "                 " << std::endl;
 	}
 }
 

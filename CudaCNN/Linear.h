@@ -17,4 +17,11 @@ class Linear : public Layer {
 	Tensor biases;
 	Tensor input;
 
+	Tensor output;
+
+	float* dev_output;
+	float* dev_input;
+	float* dev_weights;
+	float* dev_biases;
+
 };
