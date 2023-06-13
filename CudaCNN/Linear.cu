@@ -3,25 +3,20 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
-/*__global__ void linearLayerForward(float* W, float* A, float* Z, float* b,
+__global__ void linearLayerForward(float* W, float* A, float* Z, float* b,
 								   int W_x_dim, int W_y_dim,
 								   int A_x_dim, int A_y_dim) {
-
 	int row = blockIdx.y * blockDim.y + threadIdx.y;
 	int col = blockIdx.x * blockDim.x + threadIdx.x;
 
-	int Z_x_dim = A_x_dim;
-	int Z_y_dim = W_y_dim;
-
-	float Z_value = 0;
-
-	if (row < Z_y_dim && col < Z_x_dim) {
-		for (int i = 0; i < W_x_dim; i++) {
-			Z_value += W[row * W_x_dim + i] * A[i * A_x_dim + col];
+	if (row < A_x_dim && col < W_y_dim) {
+		float sum = 0.0f;
+		for (int i = 0; i < A_y_dim; i++) {
+			sum += A[row * A_y_dim + i] * W[i * W_y_dim + col];
 		}
-		Z[row * Z_x_dim + col] = Z_value + b[row];
+		Z[row * W_y_dim + col] = sum + b[col];
 	}
-}*/
+}
 
 Linear::Linear(int input_size, int output_size) :
 	Layer(input_size, output_size),
@@ -56,22 +51,23 @@ Tensor Linear::forward(Tensor& input)
 	
 	//Tensor output(input.rows, weights.cols);
 
-	dim3 block_size(8, 8);
+	dim3 block_size(1, 1);
 
-	dim3 num_of_blocks((input.rows + block_size.x - 1) / block_size.x,
-					   (weights.cols + block_size.y - 1) / block_size.y);
+
+	dim3 num_of_blocks((input.rows + block_size.x) / block_size.x,
+					   (weights.cols + block_size.y) / block_size.y);
 	
-	//linearLayerForward<<<num_of_blocks, block_size>>>(dev_weights, dev_input, dev_output, dev_biases, weights.rows, weights.cols, input.rows, input.cols);
+	linearLayerForward<<<num_of_blocks, block_size>>>(dev_weights, dev_input, dev_output, dev_biases, weights.rows, weights.cols, input.rows, input.cols);
 
-	cudaMemcpy(output.data, dev_output, output.size() * sizeof(int), cudaMemcpyDeviceToHost);
+	cudaMemcpy(output.data, dev_output, output.size() * sizeof(float), cudaMemcpyDeviceToHost);
 
-	return output;
-
-	//this->input = input;
+	//output.print();
+	
+	//CPU
 	//Tensor output = input * weights;
 	//output += biases;
 
-	//return output;
+	return output;
 }
 
 Tensor Linear::backward(Tensor& gradient, float lr)

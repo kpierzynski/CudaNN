@@ -28,6 +28,17 @@ void Tensor::set_from(const std::vector<float>& data)
 	}
 }
 
+void Tensor::set_from(float* data, int size)
+{
+	if (size != rows * cols) {
+		throw std::invalid_argument("Wrong size of vector.");
+	}
+
+	for (int i = 0; i < size; i++) {
+		this->data[i] = data[i];
+	}
+}
+
 void Tensor::set_random()
 {
 	std::random_device dev;

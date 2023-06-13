@@ -19,7 +19,7 @@ class Tensor {
 	~Tensor();
 
 	void set_from(const std::vector<float>& data);
-	void set_from(const float* data, int size);
+	void set_from(float* data, int size);
 	void set_random();
 
 	void print();		// print tensor
