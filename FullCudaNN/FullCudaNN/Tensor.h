@@ -17,6 +17,8 @@ class Tensor {
 	void dev2host();
 	void host2dev();
 
+	void zero();
+
 	void print();
 	int b_size();	// returns size in bytes!
 

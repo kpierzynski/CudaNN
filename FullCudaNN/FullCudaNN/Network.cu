@@ -9,13 +9,15 @@ void Network::addLayer(Layer* layer)
 
 Tensor& Network::forwardPass(Tensor& input)
 {
+	Tensor* data = new Tensor(input);
+
 	for (Layer* layer : this->layers) {
-		input = layer->forward(input);
+		*data = layer->forward(*data);
 	}
 	
 	cudaDeviceSynchronize();
 
-	return input;
+	return *data;
 }
 
 void Network::backwardPass(Tensor& input, float lr)
@@ -46,15 +48,16 @@ void Network::fit(std::vector<Tensor*>& x_train, std::vector<Tensor*>& y_train, 
 			//output.print();
 			//y_train[i]->dev2host();
 			//y_train[i]->print();
+
 			Tensor* lossDerivative = MSE::derivative(output, *y_train[i]);
-			
+
 			//lossDerivative->dev2host();
 			//lossDerivative->print();
 
 			backwardPass(*lossDerivative, lr);
 
 			//delete lossDerivative;	// is this here required?
-			printf("Step: %d, loss: %f                                    \r", i, loss);
+			printf("Step: %d, loss: %f                                    \r\n", i, loss);
 		}
 
 		printf("Epoch: %d, Loss: %f                                    \r\n", epoch+1, loss);

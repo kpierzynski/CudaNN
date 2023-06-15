@@ -9,7 +9,7 @@
 
 #include <stdio.h>
 
-#define BATCH_SIZE 8
+#define BATCH_SIZE 1
 
 int main()
 {
