@@ -1,4 +1,5 @@
 #include "Network.h"
+#include <chrono>
 
 void Network::addLayer(Layer* layer)
 {
@@ -47,6 +48,8 @@ void Network::fit(std::vector<Tensor>& x_train, std::vector<Tensor>& y_train, fl
 	for (int epoch = 0; epoch < epochs; epoch++) {
 		float loss = 0.0f;
 
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
 		for (int i = 0; i < x_train.size(); i++) {
 			Tensor output = forwardPass(x_train[i]);
 
@@ -58,6 +61,10 @@ void Network::fit(std::vector<Tensor>& x_train, std::vector<Tensor>& y_train, fl
 		}
 
 		std::cout << "Epoch: " << epoch << " Loss: " << loss << "                 " << std::endl;
+
+		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+		std::cout << "Time = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
+
 	}
 }
 
