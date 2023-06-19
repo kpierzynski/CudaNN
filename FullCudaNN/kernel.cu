@@ -30,7 +30,7 @@ int main()
 	net.addLayer(new Linear(128, 10, BATCH_SIZE));
 	net.addLayer(new Tanh(10, BATCH_SIZE));
 
-	net.fit(mnist.images, mnist.labels, 0.05, 10);
+	net.fit(mnist.images, mnist.labels, 0.01, 10);
 
 	Mnist mnist_test(std::string("C:\\MNIST\\t10k-images.idx3-ubyte"), std::string("C:\\MNIST\\t10k-labels.idx1-ubyte"), BATCH_SIZE, 10000);
 	net.evaluate(mnist_test.images, mnist_test.labels);

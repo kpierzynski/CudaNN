@@ -1,5 +1,6 @@
 #include "Network.h"
 #include <iostream>
+#include <chrono>
 #include "MSE.h"
 #include "Linear.h"
 
@@ -48,6 +49,8 @@ void Network::fit(std::vector<Tensor*>& x_train, std::vector<Tensor*>& y_train, 
 
 		int stop = 10000000;
 
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
 		for (int i = 0; i < x_train.size(); i++) {
 			output = forwardPass(*x_train[i]);
 
@@ -76,7 +79,7 @@ void Network::fit(std::vector<Tensor*>& x_train, std::vector<Tensor*>& y_train, 
 				((Linear*)this->layers[0])->biases->print();
 			}
 			delete lossDerivative;
-			printf("Step: %d, loss: %f                                    \r\n", i, loss);
+			printf("Step: %d, loss: %f                                    \r", i, loss);
 
 			if (i == stop) exit(-1);
 
@@ -88,6 +91,10 @@ void Network::fit(std::vector<Tensor*>& x_train, std::vector<Tensor*>& y_train, 
 		}
 
 		printf("Epoch: %d, Loss: %f                                    \r\n", epoch + 1, loss);
+
+
+		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+		std::cout << "Time = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
 	}
 }
 
