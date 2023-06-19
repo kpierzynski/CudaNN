@@ -11,9 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{4BBB538B-E9F6-4217-A2AF-42B6CF409BBB}</ProjectGuid>
-    <RootNamespace>CudaCNN</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectGuid>{75C6A653-7A8D-4551-896E-82C3A5250BDD}</ProjectGuid>
+    <RootNamespace>FullCudaNN</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -48,7 +47,6 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -57,7 +55,6 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
-      <AdditionalOptions>-std=c++17 -Xcompiler "/std:c++17" %(AdditionalOptions)</AdditionalOptions>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -81,25 +78,26 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <CudaCompile Include="kernel.cu" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Layer.cpp" />
-    <ClCompile Include="Linear.cpp" />
-    <ClCompile Include="MNISTSet.cpp" />
-    <ClCompile Include="Network.cpp" />
-    <ClCompile Include="ReLU.cpp" />
-    <ClCompile Include="Tanh.cpp" />
-    <ClCompile Include="Tensor.cpp" />
+    <CudaCompile Include="Layer.cu" />
+    <CudaCompile Include="Linear.cu" />
+    <CudaCompile Include="Mnist.cu" />
+    <CudaCompile Include="MSE.cu" />
+    <CudaCompile Include="Network.cu" />
+    <CudaCompile Include="Tensor.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Linear.h" />
-    <ClInclude Include="MNISTSet.h" />
+    <ClInclude Include="Mnist.h" />
+    <ClInclude Include="MSE.h" />
     <ClInclude Include="Network.h" />
-    <ClInclude Include="ReLU.h" />
     <ClInclude Include="Tanh.h" />
-    <ClInclude Include="stb_image.h" />
     <ClInclude Include="Tensor.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="Tanh.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

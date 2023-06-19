@@ -12,19 +12,19 @@
 
 #define DEBUG 1
 
-class MNISTSet {
-public:
+class Mnist {
+	public:
 
-	std::vector<Tensor> labels;
-	std::vector<Tensor> images;
+	std::vector<Tensor*> labels;
+	std::vector<Tensor*> images;
 
 	int item_count;
 
-	MNISTSet(const std::string& images_path, const std::string& labels_path, int batch_size, int cnt);
-	~MNISTSet();
+	Mnist(const std::string& images_path, const std::string& labels_path, int batch_size, int cnt);
+	~Mnist();
 
 	void print(int index, int batch);
 
-private:
+	private:
 	int reverse(int value);
 };

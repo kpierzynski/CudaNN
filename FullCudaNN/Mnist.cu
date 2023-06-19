@@ -1,6 +1,6 @@
-#include "MNISTSet.h"
+#include "Mnist.h"
 
-MNISTSet::MNISTSet(const std::string& images_path, const std::string& labels_path, int batch_size, int cnt) {
+Mnist::Mnist(const std::string& images_path, const std::string& labels_path, int batch_size, int cnt) {
 	std::ifstream images_file(images_path, std::ios::binary);
 	std::ifstream labels_file(labels_path, std::ios::binary);
 
@@ -44,8 +44,7 @@ MNISTSet::MNISTSet(const std::string& images_path, const std::string& labels_pat
 	item_count = (cnt < images_count) ? cnt : images_count;
 
 	for (int b = 0; b < item_count / batch_size; b++) {
-		Tensor t_label(batch_size, 10);
-		Tensor t_image(batch_size, w * h);
+
 
 		std::vector<float> f_image_data;
 		std::vector<float> f_label;
@@ -65,11 +64,18 @@ MNISTSet::MNISTSet(const std::string& images_path, const std::string& labels_pat
 
 			delete[] image_data;
 		}
-		t_image.set_from(f_image_data);
-		t_label.set_from(f_label);
 
-		images.push_back(t_image);
-		labels.push_back(t_label);
+		images.push_back(new Tensor(batch_size, w * h, f_image_data.data()));
+		labels.push_back(new Tensor(batch_size, 10, f_label.data()));
+
+	}
+
+	for (Tensor* tensor : images) {
+		tensor->host2dev();
+	}
+
+	for (Tensor* tensor : labels) {
+		tensor->host2dev();
 	}
 
 	#if DEBUG == 1
@@ -88,12 +94,14 @@ MNISTSet::MNISTSet(const std::string& images_path, const std::string& labels_pat
 	labels_file.close();
 }
 
-void MNISTSet::print(int index, int batch) {
-	std::cout << "Image at position: " << index << " has label: " << labels[index][batch] << std::endl;
+void Mnist::print(int index, int batch) {
+	std::cout << "Image at position: " << index << " has label: " << std::endl;
+	(*labels[index]).print();
+
 	const char asciiChars[] = " .:-=+*#%@";
 	for (int y = 0; y < 28; ++y) {
 		for (int x = 0; x < 28; ++x) {
-			float pixel = images[index].get(batch, y * 28 + x) * 255;
+			float pixel = (*images[index])[(y * 28 + x)] * 255;
 			float charIndex = pixel / 26;
 			std::cout << asciiChars[(int)charIndex];
 		}
@@ -101,11 +109,11 @@ void MNISTSet::print(int index, int batch) {
 	}
 }
 
-MNISTSet::~MNISTSet() {
+Mnist::~Mnist() {
 
 }
 
-int MNISTSet::reverse(int value) {
+int Mnist::reverse(int value) {
 	uint32_t result = ((value & 0xFF000000) >> 24) |
 		((value & 0x00FF0000) >> 8) |
 		((value & 0x0000FF00) << 8) |
