@@ -17,7 +17,7 @@ int main()
 	cudaError_t cudaStatus;
 	cudaStatus = cudaSetDevice(0);
 	if (cudaStatus != cudaSuccess) {
-		fprintf(stderr, "cudaSetDevice failed! Do you have a CUDA-capable GPU installed?");
+		printf("cudaSetDevice failed! Do you have a CUDA-capable GPU installed?\r\n");
 		return 1;
 	}
 

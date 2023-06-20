@@ -35,15 +35,14 @@ Tensor* Tanh::forward(Tensor& input) {
 
 
 	tanhForward << <gridSize, blockSize >> > (input.dev, output->dev, input_size*batch_size);
-	cudaDeviceSynchronize();
 
 	return output;
 }
 
 Tensor* Tanh::backward(Tensor& input, float lr) {
-	int block_size = 256;
+	int block_size = 1024;
 	int grid_size = (input_size*batch_size + block_size - 1) / block_size;
 	tanhBackward << <grid_size, block_size >> > (this->input->dev, dA->dev, input.dev, input_size*batch_size);
-	cudaDeviceSynchronize();
+	
 	return dA;
 }

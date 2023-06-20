@@ -30,17 +30,16 @@ float MSE::cost(Tensor& y_pred, Tensor& y_real)
 
 	float* loss_dev;
 	float loss = -13.0f;
-	cudaError_t cudaStatus;
 
-	cudaStatus = cudaMalloc(&loss_dev, sizeof(float));
-	cudaStatus = cudaMemset(loss_dev, 0, sizeof(float));
+	cudaMalloc(&loss_dev, sizeof(float));
+	cudaMemset(loss_dev, 0, sizeof(float));
 
 	int size = y_real.rows * y_real.cols;
+
 	int blockSize = size;
 	int gridSize = (size + blockSize) / blockSize;
 
 	cudaMSELoss << <gridSize, blockSize >> > (y_pred.dev, y_real.dev, loss_dev, size);
-	cudaStatus = cudaGetLastError();
 
 	cudaMemcpy(&loss, loss_dev, sizeof(float), cudaMemcpyDeviceToHost);
 	cudaFree(loss_dev);
@@ -48,7 +47,7 @@ float MSE::cost(Tensor& y_pred, Tensor& y_real)
 	return loss / y_real.cols / y_real.rows;
 }
 
-Tensor * MSE::derivative(Tensor& y_pred, Tensor& y_real)
+void MSE::derivative(Tensor& result, Tensor& y_pred, Tensor& y_real)
 {
 	if (y_pred.b_size() != y_real.b_size()) {
 		throw std::invalid_argument("Wrong set sizes. Cannot perform fit.");
@@ -59,9 +58,5 @@ Tensor * MSE::derivative(Tensor& y_pred, Tensor& y_real)
 	int blockSize = (size * batch_size);
 	int gridSize = (size + blockSize) / blockSize;
 
-	Tensor * deriv = new Tensor(y_real.rows, y_real.cols);
-
-	cudaMSELossDerivative << <gridSize, blockSize >> > (y_pred.dev, y_real.dev, deriv->dev, size, batch_size*size);
-
-	return deriv;
+	cudaMSELossDerivative << <gridSize, blockSize >> > (y_pred.dev, y_real.dev, result.dev, size, batch_size*size);
 }

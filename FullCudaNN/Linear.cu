@@ -2,6 +2,7 @@
 
 #include <cstdio>
 #include <iostream>
+#include <chrono>
 
 __global__ void forwardKernel(float* A, float* B, float* C, float* b, int numARows,
 					  int numAColumns, int numBRows, int numBColumns) {
@@ -50,9 +51,9 @@ __global__ void updateWeightsKernel(float* W, const float* A, const float* B, fl
 		}
 
 		W[row * colsW + col] -= lr * value;
-		//printf("uWK: %d, value: %f\r\n", row * colsW + col, value);
 	}
 }
+
 
 __global__ void updateBiasKernel(float* dZ, float* b,
 								 int dZ_x_dim, int dZ_y_dim,
@@ -101,11 +102,10 @@ Tensor* Linear::backward(Tensor& input, float lr)
 	dim3 gridSize((weights->cols + blockSize.x - 1) / blockSize.x, (input.rows + blockSize.y - 1) / blockSize.y);
 	backwardKernel << <gridSize, blockSize >> > (input.dev, weights->dev, dA->dev, input.rows, input.cols, weights->rows);
 
-
 	dim3 gridDim((weights->cols + blockSize.x - 1) / blockSize.x, (weights->rows + blockSize.y - 1) / blockSize.y);
 	updateWeightsKernel << <gridDim, blockSize >> > (weights->dev, this->input->dev, input.dev, lr,
 												 weights->rows, weights->cols, this->input->rows, this->input->cols, input.rows, input.cols);
-
+	
 	dim3 num_of_blocks1((input.cols * input.rows + blockSize.x) / blockSize.x);
 	updateBiasKernel << <num_of_blocks1, blockSize >> > (
 		input.dev,

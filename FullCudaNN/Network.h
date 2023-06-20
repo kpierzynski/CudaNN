@@ -12,7 +12,7 @@ class Network {
 
 	void addLayer(Layer* layer);
 
-	Tensor* forwardPass(const Tensor& input);
+	Tensor* forwardPass(Tensor& input);
 	void backwardPass(Tensor& input, float lr);
 
 	void fit(std::vector<Tensor*>& x_train, std::vector<Tensor*>& y_train, float lr, int epochs);

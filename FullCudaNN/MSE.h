@@ -8,5 +8,5 @@
 class MSE {
 	public:
 	static float cost(Tensor& y_pred, Tensor& y_real);
-	static Tensor* derivative(Tensor& y_pred, Tensor& y_real);
+	static void MSE::derivative(Tensor& result, Tensor& y_pred, Tensor& y_real);
 };

@@ -9,29 +9,24 @@ void Network::addLayer(Layer* layer)
 	this->layers.push_back(layer);
 }
 
-Tensor* Network::forwardPass(const Tensor& input)
+Tensor* Network::forwardPass(Tensor& input)
 {
-	Tensor* data = new Tensor(input);
-	Tensor* cleaner = data;
+	Tensor* data = &input;
 
-	for (Layer* layer : this->layers) {
-		data = layer->forward(*data);
+	for (int i = 0; i < layers.size(); i++ ) {
+		data = layers[i]->forward(*data);
 	}
-
-	delete cleaner;
 	return data;
 }
 
 void Network::backwardPass(Tensor& input, float lr)
 {
-	Tensor* data = new Tensor(input);
-	Tensor* cleaner = data;
+	Tensor* data = &input;
 
 	for (int i = layers.size() - 1; i >= 0; --i) {
 		data = layers[i]->backward(*data, lr);
 	}
 
-	delete cleaner;
 }
 
 void Network::fit(std::vector<Tensor*>& x_train, std::vector<Tensor*>& y_train, float lr, int epochs)
@@ -43,55 +38,26 @@ void Network::fit(std::vector<Tensor*>& x_train, std::vector<Tensor*>& y_train, 
 	}
 
 	Tensor* output;
+	Tensor lossDerivative(y_train[0]->rows, y_train[0]->cols);
 
 	for (int epoch = 0; epoch < epochs; epoch++) {
 		float loss = 0.0f;
-
-		int stop = 10000000;
 
 		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 		for (int i = 0; i < x_train.size(); i++) {
 			output = forwardPass(*x_train[i]);
 
-			if (i == stop) {
-				printf("OUTPUT\r\n");
-				output->print();
-
-				printf("y_train[i]\r\n");
-				y_train[i]->print();
-			}
-
 			loss = MSE::cost(*output, *y_train[i]);
 
-			Tensor* lossDerivative = MSE::derivative(*output, *y_train[i]);
-			if (i == stop) {
-				printf("DERIV\r\n");
-				lossDerivative->print();
-			}
-			backwardPass(*lossDerivative, lr);
+			MSE::derivative(lossDerivative, *output, *y_train[i]);
 
-			if (i == stop) {
-				printf("WEIGHTS\r\n");
-				((Linear*)this->layers[0])->weights->print();
+			backwardPass(lossDerivative, lr);
 
-				printf("BIASES\r\n");
-				((Linear*)this->layers[0])->biases->print();
-			}
-			delete lossDerivative;
-			printf("Step: %d, loss: %f                                    \r", i, loss);
-
-			if (i == stop) exit(-1);
-
-			cudaError_t cudaStatus = cudaGetLastError();
-			if (cudaStatus != cudaSuccess) {
-				std::cerr << "#1 CUDA Error : " << cudaGetErrorString(cudaStatus) << std::endl;
-				exit(-1);
-			}
+			if( i % 1000 == 0 ) printf("Step: %d, loss: %f                                    \r", i, loss);
 		}
 
 		printf("Epoch: %d, Loss: %f                                    \r\n", epoch + 1, loss);
-
 
 		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 		std::cout << "Time = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
