@@ -9,6 +9,7 @@
     <CudaCompile Include="Mnist.cu" />
     <CudaCompile Include="Tensor.cu" />
     <CudaCompile Include="Tanh.cu" />
+    <CudaCompile Include="Plants.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Network.h" />
@@ -18,5 +19,9 @@
     <ClInclude Include="Mnist.h" />
     <ClInclude Include="Tensor.h" />
     <ClInclude Include="Tanh.h" />
+    <ClInclude Include="Plants.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stb_image.h" />
   </ItemGroup>
 </Project>

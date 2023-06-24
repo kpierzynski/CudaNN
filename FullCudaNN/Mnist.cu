@@ -82,13 +82,12 @@ Mnist::Mnist(const std::string& images_path, const std::string& labels_path, int
 	std::cout << "Done reading images" << std::endl;
 	#endif
 
-	auto seed = unsigned(std::time(0));
+	auto seed = time(0);
+	std::mt19937 gen(seed);
+	std::shuffle(images.begin(), images.end(), gen);
 
-	std::srand(seed);
-	std::random_shuffle(images.begin(), images.end());
-
-	std::srand(seed);
-	std::random_shuffle(labels.begin(), labels.end());
+	std::mt19937 gen2(seed);
+	std::shuffle(labels.begin(), labels.end(), gen2);
 
 	images_file.close();
 	labels_file.close();

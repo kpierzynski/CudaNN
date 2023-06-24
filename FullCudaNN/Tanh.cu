@@ -18,21 +18,16 @@ __global__ void tanhBackward(float* input_data, float* output_data, float* grad,
 }
 
 Tanh::Tanh(int size, int batch_size) : Layer(size, size), batch_size(batch_size) {
-	input = new Tensor(batch_size, input_size);
-
 	dA = new Tensor(batch_size, input_size);
 	output = new Tensor(batch_size, output_size);
 }
 
 Tensor* Tanh::forward(Tensor& input) {
-	delete this->input;
-
-	this->input = new Tensor(input);
+	this->input = &input;
 
 	int size = input.rows * input.cols;
 	int blockSize = size;
 	int gridSize = (size + blockSize) / blockSize;
-
 
 	tanhForward << <gridSize, blockSize >> > (input.dev, output->dev, input_size*batch_size);
 
