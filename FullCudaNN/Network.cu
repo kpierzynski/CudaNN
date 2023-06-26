@@ -54,7 +54,7 @@ void Network::fit(std::vector<Tensor*>& x_train, std::vector<Tensor*>& y_train, 
 
 			backwardPass(lossDerivative, lr);
 
-			if( i % 1000 == 0 ) printf("Step: %d, loss: %f                                    \r", i, loss);
+			if (i % 1000 == 0) printf("Step: %d, loss: %f                                    \r", i, loss);
 		}
 
 		printf("Epoch: %d, Loss: %f                                    \r\n", epoch + 1, loss);
@@ -99,6 +99,7 @@ void convert(Tensor& t) {
 		}
 	}
 }
+
 float Network::evaluate(std::vector<Tensor*>& x_test, std::vector<Tensor*>& y_test)
 {
 	if (x_test.size() != y_test.size()) {

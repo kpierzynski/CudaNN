@@ -24,12 +24,17 @@ Plants::Plants(const std::string& images_path, int batch_size, int cnt)
 			for (const auto& image : std::filesystem::directory_iterator(item)) {
 				std::string image_path = image.path().string();
 
-				uint8_t* image_data = stbi_load(image_path.c_str(), &w, &h, &n, STBI_rgb);
+				uint8_t* image_data = stbi_load(image_path.c_str(), &w, &h, &n, 1);
+
+				if (w != 256 || h != 256 || n != 1) {
+					printf("ABORT: error while reading plant images. Read dims: (%d, %d, %d)\r\n", w, h, n);
+					exit(-1);
+				}
 
 				std::vector<float> f_image_data;
 
 				for (int i = 0; i < w * h * n; i++) {
-					f_image_data.push_back((float)image_data[i] / 255.0f);
+					f_image_data.push_back((float)( image_data[i] ) / 255.0f);
 				}
 
 				all_images.push_back(f_image_data);
@@ -38,7 +43,6 @@ Plants::Plants(const std::string& images_path, int batch_size, int cnt)
 				class_cnt++;
 				if (class_cnt >= cnt) break;
 			}
-
 		}
 	}
 
@@ -65,6 +69,11 @@ Plants::Plants(const std::string& images_path, int batch_size, int cnt)
 			}
 		}
 
+		if (batch.size() != batch_size * w * h * n) {
+			printf("Error in size. Aborting... s: %lld,  (%d %d %d %d)\r\n", batch.size(), batch_size, w, h, n);
+			exit(-1);
+		}
+
 		this->images.push_back(new Tensor(batch_size, w * h * n, batch.data()));
 		this->labels.push_back(new Tensor(batch_size, 10, labels_batch.data()));
 	}
@@ -72,4 +81,19 @@ Plants::Plants(const std::string& images_path, int batch_size, int cnt)
 
 Plants::~Plants()
 {
+}
+
+void Plants::print(int index, int batch) {
+	std::cout << "Image at position: " << index << " has label: " << std::endl;
+	(*labels[index]).print();
+
+	const char asciiChars[] = " .:-=+*#%@";
+	for (int y = 0; y < 64; ++y) {
+		for (int x = 0; x < 64; ++x) {
+			float pixel = (*images[index])[(y * 64 + x)] * 255;
+			float charIndex = pixel / 26;
+			std::cout << asciiChars[(int)charIndex];
+		}
+		std::cout << std::endl;
+	}
 }

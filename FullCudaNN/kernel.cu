@@ -18,43 +18,48 @@ int main()
 	cudaError_t cudaStatus;
 	cudaStatus = cudaSetDevice(0);
 	if (cudaStatus != cudaSuccess) {
-		printf("cudaSetDevice failed! Do you have a CUDA-capable GPU installed?\r\n");
-		return 1;
+		printf("Error! Cannot set device 0. Aborting.\r\n");
+		exit(-1);
 	}
 
-	Plants plants("C:\\PLANTS\\color", BATCH_SIZE, 360);
+	//#define MNIST
+
+	#ifdef MNIST
+	Plants plants("C:\\IMAGE_MNIST_RESIZED", BATCH_SIZE, 3500);
+
 	Network net2;
-	net2.addLayer(new Linear(256 * 256 * 3, 512, BATCH_SIZE));
-	net2.addLayer(new Tanh(512, BATCH_SIZE));
+	net2.addLayer(new Linear(256 * 256 * 1, 32, BATCH_SIZE));
+	net2.addLayer(new Tanh(32, BATCH_SIZE));
 
-	net2.addLayer(new Linear(512, 128, BATCH_SIZE));
-	net2.addLayer(new Tanh(128, BATCH_SIZE));
-
-	net2.addLayer(new Linear(128, 10, BATCH_SIZE));
+	net2.addLayer(new Linear(32, 10, BATCH_SIZE));
 	net2.addLayer(new Tanh(10, BATCH_SIZE));
 
-	net2.fit(plants.images, plants.labels, 0.001, 3);
+	net2.fit(plants.images, plants.labels, 0.01f, 10);
 
-	return -1;
+	//Plants plants_test("C:\\PLANTS\\test", BATCH_SIZE, 72);
+	net2.evaluate(plants.images, plants.labels);
 
-	Mnist mnist(std::string("C:\\MNIST\\train-images.idx3-ubyte"), std::string("C:\\MNIST\\train-labels.idx1-ubyte"), BATCH_SIZE, 60000);
+	#else
+
+	Mnist mnist(std::string("C:\\EMNIST\\emnist-digits-train-images-idx3-ubyte"), std::string("C:\\EMNIST\\emnist-digits-train-labels-idx1-ubyte"), BATCH_SIZE, 300000);
 	mnist.print(1, 0);
 
 	Network net;
-	net.addLayer(new Linear(28 * 28, 128, BATCH_SIZE));
-	net.addLayer(new Tanh(128, BATCH_SIZE));
-	net.addLayer(new Linear(128, 10, BATCH_SIZE));
+	net.addLayer(new Linear(28 * 28, 30, BATCH_SIZE));
+	net.addLayer(new Tanh(30, BATCH_SIZE));
+	net.addLayer(new Linear(30, 10, BATCH_SIZE));
 	net.addLayer(new Tanh(10, BATCH_SIZE));
 
-	net.fit(mnist.images, mnist.labels, 0.01, 10);
+	net.fit(mnist.images, mnist.labels, 0.01f, 10);
 
-	Mnist mnist_test(std::string("C:\\MNIST\\t10k-images.idx3-ubyte"), std::string("C:\\MNIST\\t10k-labels.idx1-ubyte"), BATCH_SIZE, 10000);
+	Mnist mnist_test(std::string("C:\\EMNIST\\emnist-digits-test-images-idx3-ubyte"), std::string("C:\\EMNIST\\emnist-digits-test-labels-idx1-ubyte"), BATCH_SIZE, 10000);
 	net.evaluate(mnist_test.images, mnist_test.labels);
+	#endif
 
 	cudaStatus = cudaDeviceReset();
 	if (cudaStatus != cudaSuccess) {
-		fprintf(stderr, "cudaDeviceReset failed!");
-		return 1;
+		printf("Cannot reset cuda device. Aborting.\r\n");
+		exit(-1);
 	}
 
 	return 0;

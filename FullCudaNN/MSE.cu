@@ -12,8 +12,6 @@ __global__ void cudaMSELoss(const float* predictions, const float* targets, floa
 
 __global__ void cudaMSELossDerivative(float* predictions, float* targets, float* derivatives, int size, int batch_size)
 {
-	//printf("cudaMSELossDerivative\r\n");
-
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;
 
 	if (idx < batch_size)
@@ -36,10 +34,11 @@ float MSE::cost(Tensor& y_pred, Tensor& y_real)
 
 	int size = y_real.rows * y_real.cols;
 
-	int blockSize = size;
-	int gridSize = (size + blockSize) / blockSize;
-
-	cudaMSELoss << <gridSize, blockSize >> > (y_pred.dev, y_real.dev, loss_dev, size);
+	{
+		int dimBlock = size;
+		int dimGrid = (size + dimBlock) / dimBlock;
+		cudaMSELoss << <dimGrid, dimBlock >> > (y_pred.dev, y_real.dev, loss_dev, size);
+	}
 
 	cudaMemcpy(&loss, loss_dev, sizeof(float), cudaMemcpyDeviceToHost);
 	cudaFree(loss_dev);
@@ -55,8 +54,10 @@ void MSE::derivative(Tensor& result, Tensor& y_pred, Tensor& y_real)
 
 	int size = y_real.cols;
 	int batch_size = y_real.rows;
-	int blockSize = (size * batch_size);
-	int gridSize = (size + blockSize) / blockSize;
 
-	cudaMSELossDerivative << <gridSize, blockSize >> > (y_pred.dev, y_real.dev, result.dev, size, batch_size*size);
+	{
+		int dimBlock = (size * batch_size);
+		int dimGrid = (size + dimBlock) / dimBlock;
+		cudaMSELossDerivative << <dimGrid, dimBlock >> > (y_pred.dev, y_real.dev, result.dev, size, batch_size * size);
+	}
 }

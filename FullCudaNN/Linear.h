@@ -12,10 +12,11 @@ class Linear : public Layer {
 	Tensor * forward(Tensor& input) override;
 	Tensor * backward(Tensor& input, float lr) override;
 
+	private:
 	Tensor* weights;
 	Tensor* biases;
 	Tensor* input;
 	Tensor* output;
 
-	Tensor* dA;
+	Tensor* gradient;
 };

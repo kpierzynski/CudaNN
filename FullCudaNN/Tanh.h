@@ -18,5 +18,5 @@ class Tanh : public Layer {
 	Tensor* input;
 	Tensor* output;
 
-	Tensor* dA;
+	Tensor* gradient;
 };
