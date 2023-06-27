@@ -6,6 +6,7 @@
 #include "Tensor.h"
 
 class MSE {
+
 	public:
 	static float cost(Tensor& y_pred, Tensor& y_real);
 	static void derivative(Tensor& result, Tensor& y_pred, Tensor& y_real);

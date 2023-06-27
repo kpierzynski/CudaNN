@@ -1,6 +1,9 @@
 #include "MSE.h"
 #include <stdexcept>
 #include <iostream>
+#include <vector>
+
+#define BLOCK_SIZE 512
 
 __global__ void cudaMSELoss(const float* predictions, const float* targets, float* loss, int size) {
 	int idx = threadIdx.x + blockIdx.x * blockDim.x;
@@ -8,6 +11,33 @@ __global__ void cudaMSELoss(const float* predictions, const float* targets, floa
 		float diff = predictions[idx] - targets[idx];
 		atomicAdd(loss, diff * diff);
 	}
+}
+
+__global__ void cudaMSELossReduction(const float* predictions, const float* targets, float* output, int len) {
+	__shared__ float partialSum[2 * BLOCK_SIZE];
+	unsigned int t = threadIdx.x, start = 2 * blockIdx.x * BLOCK_SIZE;
+
+	if (start + t < len) {
+		float value = predictions[start + t] - targets[start + t];
+		partialSum[t] = value * value;
+	}
+	else
+		partialSum[t] = 0;
+	if (start + BLOCK_SIZE + t < len) {
+		float value = predictions[start + BLOCK_SIZE + t] - targets[start + BLOCK_SIZE + t];
+		partialSum[BLOCK_SIZE + t] = value * value;
+	}
+	else
+		partialSum[BLOCK_SIZE + t] = 0;
+
+	for (unsigned int stride = BLOCK_SIZE; stride >= 1; stride >>= 1) {
+		__syncthreads();
+		if (t < stride)
+			partialSum[t] += partialSum[t + stride];
+	}
+
+	if (t == 0)
+		output[blockIdx.x] = partialSum[0];
 }
 
 __global__ void cudaMSELossDerivative(float* predictions, float* targets, float* derivatives, int size, int batch_size)
@@ -26,22 +56,33 @@ float MSE::cost(Tensor& y_pred, Tensor& y_real)
 		throw std::invalid_argument("Wrong set sizes. Cannot perform fit.");
 	}
 
-	float* loss_dev;
-	float loss = -13.0f;
-
-	cudaMalloc(&loss_dev, sizeof(float));
-	cudaMemset(loss_dev, 0, sizeof(float));
-
 	int size = y_real.rows * y_real.cols;
 
-	{
-		int dimBlock = size;
-		int dimGrid = (size + dimBlock) / dimBlock;
-		cudaMSELoss << <dimGrid, dimBlock >> > (y_pred.dev, y_real.dev, loss_dev, size);
+	int input_size = size;
+	int output_size = input_size / (BLOCK_SIZE << 1);
+	if (input_size % (BLOCK_SIZE << 1)) {
+		output_size++;
 	}
+	
+	static float* loss_dev = nullptr;
+	std::vector<float> loss_host(output_size);
 
-	cudaMemcpy(&loss, loss_dev, sizeof(float), cudaMemcpyDeviceToHost);
-	cudaFree(loss_dev);
+	if (loss_dev == nullptr) {
+		cudaMalloc(&loss_dev, output_size * sizeof(float));
+	}
+	cudaMemset(loss_dev, 0, output_size * sizeof(float));
+
+	dim3 dimGrid(output_size, 1, 1);
+	dim3 dimBlock(BLOCK_SIZE, 1, 1);
+
+	cudaMSELossReduction<< <dimGrid, dimBlock >> > (y_pred.dev, y_real.dev, loss_dev, input_size);
+
+	cudaMemcpy(loss_host.data(), loss_dev, output_size * sizeof(float), cudaMemcpyDeviceToHost);
+
+	float loss = 0.0f;
+	for (int i = 0; i < loss_host.size(); i++) {
+		loss += loss_host[i];
+	}
 
 	return loss / y_real.cols / y_real.rows;
 }

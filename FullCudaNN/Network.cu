@@ -13,7 +13,7 @@ Tensor* Network::forwardPass(Tensor& input)
 {
 	Tensor* data = &input;
 
-	for (int i = 0; i < layers.size(); i++ ) {
+	for (int i = 0; i < layers.size(); i++) {
 		data = layers[i]->forward(*data);
 	}
 	return data;
@@ -48,18 +48,17 @@ void Network::fit(std::vector<Tensor*>& x_train, std::vector<Tensor*>& y_train, 
 		for (int i = 0; i < x_train.size(); i++) {
 			output = forwardPass(*x_train[i]);
 
-			loss = MSE::cost(*output, *y_train[i]);
+			if (i % (x_train.size() / 10) == 0) loss = MSE::cost(*output, *y_train[i]);
 
 			MSE::derivative(lossDerivative, *output, *y_train[i]);
 
 			backwardPass(lossDerivative, lr);
 
-			if (i % 1000 == 0) printf("Step: %d, loss: %f                                    \r", i, loss);
+			if (i % (x_train.size() / 10) == 0) printf("Step: %d, loss: %f                                    \r", i, loss);
 		}
+		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
 		printf("Epoch: %d, Loss: %f                                    \r\n", epoch + 1, loss);
-
-		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 		std::cout << "Time = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
 	}
 }

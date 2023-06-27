@@ -82,7 +82,6 @@ __global__ void tiledBackwardKernel(float* A, float* B, float* C, int rowsA, int
 }
 #endif
 
-
 __global__ void backwardKernel(float* A, float* B, float* C, int rowsA, int colsA, int colsB)
 {
 	int row = blockIdx.y * blockDim.y + threadIdx.y;
@@ -98,7 +97,6 @@ __global__ void backwardKernel(float* A, float* B, float* C, int rowsA, int cols
 		C[row * colsB + col] = sum;
 	}
 }
-
 
 __global__ void updateWeightsKernel(float* W, const float* A, const float* B, float lr, int rowsW, int colsW, int rowsA, int colsA, int rowsB, int colsB) {
 
@@ -161,8 +159,6 @@ Linear::Linear(int input_size, int output_size, int batch_size) : Layer(input_si
 
 	gradient = new Tensor(batch_size, input_size);
 	output = new Tensor(batch_size, output_size);
-
-	biases->zero();
 }
 
 Tensor* Linear::forward(Tensor& input)
