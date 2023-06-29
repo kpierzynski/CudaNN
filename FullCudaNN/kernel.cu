@@ -11,7 +11,7 @@
 #include "Tanh.h"
 #include "Plants.h"
 
-#define BATCH_SIZE 32
+#define BATCH_SIZE 48
 
 int main()
 {
@@ -22,16 +22,16 @@ int main()
 		exit(-1);
 	}
 
-	//#define MNIST
+	#define MNIST
 
 	#ifdef MNIST
-	Plants plants("C:\\IMAGE_MNIST_RESIZED", BATCH_SIZE, 3500);
+	Plants plants("C:\\IMAGE_MNIST_128x128", BATCH_SIZE, 3500);
 
 	Network net2;
-	net2.addLayer(new Linear(256 * 256 * 1, 32, BATCH_SIZE));
-	net2.addLayer(new Tanh(32, BATCH_SIZE));
+	net2.addLayer(new Linear(128 * 128 * 1, 10, BATCH_SIZE));
+	net2.addLayer(new Tanh(10, BATCH_SIZE));
 
-	net2.addLayer(new Linear(32, 10, BATCH_SIZE));
+	net2.addLayer(new Linear(10, 10, BATCH_SIZE));
 	net2.addLayer(new Tanh(10, BATCH_SIZE));
 
 	net2.fit(plants.images, plants.labels, 0.01f, 10);
@@ -45,9 +45,9 @@ int main()
 	mnist.print(1, 0);
 
 	Network net;
-	net.addLayer(new Linear(28 * 28, 30, BATCH_SIZE));
-	net.addLayer(new Tanh(30, BATCH_SIZE));
-	net.addLayer(new Linear(30, 10, BATCH_SIZE));
+	net.addLayer(new Linear(28 * 28, 10, BATCH_SIZE));
+	net.addLayer(new Tanh(10, BATCH_SIZE));
+	net.addLayer(new Linear(10, 10, BATCH_SIZE));
 	net.addLayer(new Tanh(10, BATCH_SIZE));
 
 	net.fit(mnist.images, mnist.labels, 0.01f, 10);

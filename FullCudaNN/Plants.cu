@@ -26,7 +26,7 @@ Plants::Plants(const std::string& images_path, int batch_size, int cnt)
 
 				uint8_t* image_data = stbi_load(image_path.c_str(), &w, &h, &n, 1);
 
-				if (w != 256 || h != 256 || n != 1) {
+				if (w != 128 || h != 128 || n != 1) {
 					printf("ABORT: error while reading plant images. Read dims: (%d, %d, %d)\r\n", w, h, n);
 					exit(-1);
 				}

@@ -14,30 +14,30 @@ __global__ void cudaMSELoss(const float* predictions, const float* targets, floa
 }
 
 __global__ void cudaMSELossReduction(const float* predictions, const float* targets, float* output, int len) {
-	__shared__ float partialSum[2 * BLOCK_SIZE];
-	unsigned int t = threadIdx.x, start = 2 * blockIdx.x * BLOCK_SIZE;
+	__shared__ float partial_sum[2 * BLOCK_SIZE];
+	int t = threadIdx.x, start = 2 * blockIdx.x * BLOCK_SIZE;
 
 	if (start + t < len) {
 		float value = predictions[start + t] - targets[start + t];
-		partialSum[t] = value * value;
+		partial_sum[t] = value * value;
 	}
 	else
-		partialSum[t] = 0;
+		partial_sum[t] = 0;
 	if (start + BLOCK_SIZE + t < len) {
 		float value = predictions[start + BLOCK_SIZE + t] - targets[start + BLOCK_SIZE + t];
-		partialSum[BLOCK_SIZE + t] = value * value;
+		partial_sum[BLOCK_SIZE + t] = value * value;
 	}
 	else
-		partialSum[BLOCK_SIZE + t] = 0;
+		partial_sum[BLOCK_SIZE + t] = 0;
 
-	for (unsigned int stride = BLOCK_SIZE; stride >= 1; stride >>= 1) {
+	for (int stride = BLOCK_SIZE; stride >= 1; stride >>= 1) {
 		__syncthreads();
 		if (t < stride)
-			partialSum[t] += partialSum[t + stride];
+			partial_sum[t] += partial_sum[t + stride];
 	}
 
 	if (t == 0)
-		output[blockIdx.x] = partialSum[0];
+		output[blockIdx.x] = partial_sum[0];
 }
 
 __global__ void cudaMSELossDerivative(float* predictions, float* targets, float* derivatives, int size, int batch_size)

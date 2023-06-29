@@ -40,6 +40,8 @@ void Network::fit(std::vector<Tensor*>& x_train, std::vector<Tensor*>& y_train, 
 	Tensor* output;
 	Tensor lossDerivative(y_train[0]->rows, y_train[0]->cols);
 
+	float avg_time = 0;
+
 	for (int epoch = 0; epoch < epochs; epoch++) {
 		float loss = 0.0f;
 
@@ -58,9 +60,14 @@ void Network::fit(std::vector<Tensor*>& x_train, std::vector<Tensor*>& y_train, 
 		}
 		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
+		avg_time += std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+
 		printf("Epoch: %d, Loss: %f                                    \r\n", epoch + 1, loss);
 		std::cout << "Time = " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]" << std::endl;
 	}
+
+	avg_time /= epochs;
+	printf("Average time: %f\r\n", avg_time);
 }
 
 
