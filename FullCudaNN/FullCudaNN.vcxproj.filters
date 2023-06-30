@@ -9,7 +9,7 @@
     <CudaCompile Include="Mnist.cu" />
     <CudaCompile Include="Tensor.cu" />
     <CudaCompile Include="Tanh.cu" />
-    <CudaCompile Include="Plants.cu" />
+    <CudaCompile Include="Loader.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Network.h" />
@@ -19,7 +19,7 @@
     <ClInclude Include="Mnist.h" />
     <ClInclude Include="Tensor.h" />
     <ClInclude Include="Tanh.h" />
-    <ClInclude Include="Plants.h" />
+    <ClInclude Include="Loader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stb_image.h" />

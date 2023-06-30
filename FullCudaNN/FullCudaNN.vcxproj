@@ -98,7 +98,7 @@
     <ClInclude Include="Mnist.h" />
     <ClInclude Include="MSE.h" />
     <ClInclude Include="Network.h" />
-    <ClInclude Include="Plants.h" />
+    <ClInclude Include="Loader.h" />
     <ClInclude Include="Tanh.h" />
     <ClInclude Include="Tensor.h" />
   </ItemGroup>
@@ -108,7 +108,7 @@
     </CudaCompile>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="Plants.cu">
+    <CudaCompile Include="Loader.cu">
       <FileType>Document</FileType>
     </CudaCompile>
     <ClCompile Include="stb_image.h" />
