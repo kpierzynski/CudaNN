@@ -26,8 +26,9 @@ Algorithm can be summarized as follows:
 ### Minimalize loss function
 To minimalize loss function, stochastic gradient descent method is implemented.
 
-Loss function is called Mean Squared Error: $$MSE = \frac{1}{n}\sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$
-It's derivative is: $$MSE' = \frac{2}{n}\sum_{i=1}^{n} (y_i - \hat{y}_i)$$
+Loss function is called Mean Squared Error: $$MSE = \frac{1}{n}\sum_{i=1}^n (y_i - \hat{y}_i)^2$$
+
+It's derivative is: $$MSE' = \frac{2}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)$$
 
 Formula for updated weights $\theta$ is given as: $$\theta = \theta - \eta \cdot \nabla_\theta J(\theta; x^{(i)}; y^{(i)})$$
 - $J(\theta)$ is cost function, $MSE$, that algorithm is minimizing,
