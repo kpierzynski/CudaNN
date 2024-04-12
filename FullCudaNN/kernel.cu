@@ -1,5 +1,4 @@
-﻿
-#include "cuda_runtime.h"
+﻿#include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
 #include <stdio.h>
@@ -22,25 +21,7 @@ int main()
 		exit(-1);
 	}
 
-	//#define MNIST
-
-	#ifdef MNIST
-	Loader loader("C:\\IMAGE_MNIST_128x128", BATCH_SIZE, 3500);
-
-	Network net2;
-	net2.addLayer(new Linear(128 * 128 * 1, 30, BATCH_SIZE));
-	net2.addLayer(new Tanh(30, BATCH_SIZE));
-
-	net2.addLayer(new Linear(30, 10, BATCH_SIZE));
-	net2.addLayer(new Tanh(10, BATCH_SIZE));
-
-	net2.fit(loader.images, loader.labels, 0.01f, 10);
-
-	net2.evaluate(loader.images, loader.labels);
-
-	#else
-
-	Mnist mnist(std::string("C:\\EMNIST\\emnist-digits-train-images-idx3-ubyte"), std::string("C:\\EMNIST\\emnist-digits-train-labels-idx1-ubyte"), BATCH_SIZE, 300000);
+	Mnist mnist(std::string("../data/train-images-idx3-ubyte"), std::string("../data/train-labels-idx1-ubyte"), BATCH_SIZE, 300000);
 	mnist.print(1, 0);
 
 	Network net;
@@ -51,9 +32,8 @@ int main()
 
 	net.fit(mnist.images, mnist.labels, 0.01f, 10);
 
-	Mnist mnist_test(std::string("C:\\EMNIST\\emnist-digits-test-images-idx3-ubyte"), std::string("C:\\EMNIST\\emnist-digits-test-labels-idx1-ubyte"), BATCH_SIZE, 10000);
+	Mnist mnist_test(std::string("../data/t10k-images-idx3-ubyte"), std::string("../data/t10k-labels-idx1-ubyte"), BATCH_SIZE, 10000);
 	net.evaluate(mnist_test.images, mnist_test.labels);
-	#endif
 
 	cudaStatus = cudaDeviceReset();
 	if (cudaStatus != cudaSuccess) {
